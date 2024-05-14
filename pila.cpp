@@ -10,9 +10,9 @@ struct nodo {
 } *primero;
 
 
-void insertarNodo();
+void crearNodo();
 
-void insertarNodo() {
+void crearNodo() {
     nodo *nuevo = new nodo();
     cout << "Ingrese el dato: ";
     cin >> nuevo -> dato;
@@ -20,29 +20,13 @@ void insertarNodo() {
     nuevo -> siguiente = primero;
     primero = nuevo;
 
-    cout << "Nodo ingresado con éxito" << endl;
+    cout << "Nodo ingresado" << endl;
 }
 
 
-void desplegarPila();
+void leerNodo();
 
-void desplegarPila() {
-    nodo *actual = new nodo();
-    actual = primero;
-    if (primero != NULL) {
-        while (actual != NULL) {
-            cout << endl << " " << actual -> dato;
-            actual = actual -> siguiente;
-        }
-    } else {
-        cout << "La pila se encuentra vacía" << endl;
-    }
-}
-
-
-void buscarNodo();
-
-void buscarNodo() {
+void leerNodo() {
     nodo *actual = new nodo();
     actual = primero;
     bool encontrado = false;
@@ -128,6 +112,22 @@ void eliminarNodo() {
         cout << "La pila se encuentra vacía" << endl;
     }
 }
+
+
+/* void mostrarPila();
+
+void mostrarPila() {
+    nodo *actual = new nodo();
+    actual = primero;
+    if (primero != NULL) {
+        while (actual != NULL) {
+            cout << endl << " " << actual -> dato;
+            actual = actual -> siguiente;
+        }
+    } else {
+        cout << "La pila se encuentra vacía" << endl;
+    }
+} */
 
 
 // Pila  9 -> 8 -> 7 -> 6 -> 5 -> 4 -> 3 -> 2 -> 1 -> NULL
