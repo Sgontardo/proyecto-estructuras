@@ -68,6 +68,7 @@ Uso de lista enlazada
 */
 
 #include <iostream>
+#include <string>
 
 using namespace std;
 
