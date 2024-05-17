@@ -111,6 +111,21 @@ void borrarNodo() {
     }
 }
 
+void recorrerLista();
+
+void recorrerLista() {
+    nodo *actual = new nodo();
+    actual = primero;
+    if (primero != NULL) {
+        while (actual != NULL) {
+            cout << " " << actual -> dato;
+            actual = actual -> siguiente;
+        }
+    } else {
+        cout << "La lista se encuentra vacía" << endl;
+    }
+}
+
 
 int main() {
     return 0;
