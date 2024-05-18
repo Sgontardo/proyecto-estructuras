@@ -126,8 +126,3 @@ void recorrerLista() {
         cout << "La lista se encuentra vacía" << endl;
     }
 }
-
-
-int main() {
-    return 0;
-}
