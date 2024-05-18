@@ -1,0 +1,13 @@
+Raza
+Nombre: Humanoide
+Energía: 120
+Salud: 100
+Ambiente: Planeta
+Accesorio
+Nombre: Rifle
+Tipo: Ataque
+Valor: 15
+Energía: 20
+Contenedor: 15
+Ambiente
+Nombre: Planeta

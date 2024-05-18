@@ -105,7 +105,7 @@ void menu() {
                     } else if (opcionRaza == 4) {
                         eliminarRaza();
                     } else if (opcionRaza == 5) {
-                        cout << "Saliendo" << endl;
+                        cout << "Volviendo" << endl;
                         break;
                     } else {
                         cout << "Ingrese una opción válida" << endl;
@@ -131,7 +131,7 @@ void menu() {
                     } else if (opcionAccesorio == 4) {
                         eliminarAccesorio();
                     } else if (opcionAccesorio == 5) {
-                        cout << "Saliendo" << endl;
+                        cout << "Volviendo" << endl;
                         break;
                     } else {
                         cout << "Ingrese una opción válida" << endl;
@@ -157,7 +157,7 @@ void menu() {
                     } else if (opcionAmbiente == 4) {
                         eliminarAmbiente();
                     } else if (opcionAmbiente == 5) {
-                        cout << "Saliendo" << endl;
+                        cout << "Volviendo" << endl;
                         break;
                     } else {
                         cout << "Ingrese una opción válida" << endl;
@@ -170,11 +170,12 @@ void menu() {
             case 5:
                 cout << "Saliendo" << endl;
                 break;
+                exit;
             default:
                 cout << "Opción no válida" << endl;
                 break;
         }
-    } while(opcion != 4);
+    } while(opcion != 5);
 }
 
 int main() {
