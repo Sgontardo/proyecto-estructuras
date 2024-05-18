@@ -25,6 +25,15 @@ struct ambiente {
     ambiente *siguiente;
 } *primeroAmbiente, *ultimoAmbiente;
 
+accesorio* accesorios[5];
+
+struct soldado {
+    string nombre;
+    raza *raza;
+    accesorio *accesorios[5];
+    ambiente *ambiente;
+};
+
 void crearRaza() {
     raza *nuevo = new raza();
     cout << "Ingrese el nombre de la raza: ";
@@ -330,5 +339,35 @@ void eliminarAmbiente() {
         }
     } else {
         cout << "La lista de ambientes se encuentra vacía" << endl;
+    }
+}
+
+void cargarAccesorios() {
+    accesorio *actual = new accesorio();
+    actual = primeroAccesorio;
+    int i = 0;
+    if (primeroAccesorio != NULL) {
+        while (actual != NULL) {
+            accesorios[i] = actual;
+            i++;
+            actual = actual -> siguiente;
+        }
+    } else {
+        cout << "La lista de accesorios se encuentra vacía" << endl;
+    }
+}
+
+void crearSoldado() {
+    soldado *nuevo = new soldado();
+    cout << "Ingrese el nombre del soldado: ";
+    cin >> nuevo -> nombre;
+    cout << "Ingrese la raza del soldado: ";
+    cin >> nuevo -> raza -> nombre;
+    cout << "Ingrese el ambiente del soldado: ";
+    cin >> nuevo -> ambiente -> nombre;
+    cargarAccesorios();
+    for (int i = 0; i < 5; i++) {
+        cout << "Ingrese el accesorio " << i + 1 << " del soldado: ";
+        cin >> nuevo -> accesorios[i] -> nombre;
     }
 }
