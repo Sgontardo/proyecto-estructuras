@@ -69,7 +69,7 @@ Uso de lista enlazada
 
 #include <iostream>
 #include <string>
-#include <fstream>
+#include "libreria.h"
 
 using namespace std;
 
@@ -95,6 +95,20 @@ void menu() {
                     cout << "5. Salir" << endl;
                     cout << "Ingrese una opción: ";
                     cin >> opcionRaza;
+                    if (opcionRaza == 1) {
+                        crearRaza();
+                    } else if (opcionRaza == 2) {
+                        leerRaza();
+                    } else if (opcionRaza == 3) {
+                        modificarRaza();
+                    } else if (opcionRaza == 4) {
+                        eliminarRaza();
+                    } else if (opcionRaza == 5) {
+                        cout << "Saliendo" << endl;
+                        break;
+                    } else {
+                        cout << "Ingrese una opción válida" << endl;
+                    }
 } while(opcionRaza != 5);
                 break;
             case 2:
@@ -107,6 +121,20 @@ void menu() {
                     cout << "5. Salir" << endl;
                     cout << "Ingrese una opción: ";
                     cin >> opcionAccesorio;
+                    if (opcionAccesorio == 1) {
+                        crearAccesorio();
+                    } else if (opcionAccesorio == 2) {
+                        leerAccesorio();
+                    } else if (opcionAccesorio == 3) {
+                        modificarAccesorio();
+                    } else if (opcionAccesorio == 4) {
+                        eliminarAccesorio();
+                    } else if (opcionAccesorio == 5) {
+                        cout << "Saliendo" << endl;
+                        break;
+                    } else {
+                        cout << "Ingrese una opción válida" << endl;
+                    }
                 } while(opcionAccesorio != 5);
                 break;
             case 3:
@@ -119,6 +147,20 @@ void menu() {
                     cout << "5. Salir" << endl;
                     cout << "Ingrese una opción: ";
                     cin >> opcionAmbiente;
+                    if (opcionAmbiente == 1) {
+                        crearAmbiente();
+                    } else if (opcionAmbiente == 2) {
+                        leerAmbiente();
+                    } else if (opcionAmbiente == 3) {
+                        modificarAmbiente();
+                    } else if (opcionAmbiente == 4) {
+                        eliminarAmbiente();
+                    } else if (opcionAmbiente == 5) {
+                        cout << "Saliendo" << endl;
+                        break;
+                    } else {
+                        cout << "Ingrese una opción válida" << endl;
+                    }
                 } while(opcionAmbiente != 5);
                 break;
             case 4:
