@@ -81,7 +81,8 @@ void menu() {
         cout << "1. Acciones para raza" << endl;
         cout << "2. Acciones para accesorio" << endl;
         cout << "3. Acciones para ambiente" << endl;
-        cout << "4. Salir" << endl;
+        cout << "4. Crear soldado" << endl;
+        cout << "5. Salir" << endl;
         cout << "Ingrese una opción: ";
         cin >> opcion;
         switch (opcion) {
@@ -92,7 +93,7 @@ void menu() {
                     cout << "2. Leer razas" << endl;
                     cout << "3. Modificar razas" << endl;
                     cout << "4. Eliminar raza" << endl;
-                    cout << "5. Salir" << endl;
+                    cout << "5. Volver" << endl;
                     cout << "Ingrese una opción: ";
                     cin >> opcionRaza;
                     if (opcionRaza == 1) {
@@ -118,7 +119,7 @@ void menu() {
                     cout << "2. Leer accesorios" << endl;
                     cout << "3. Modificar accesorios" << endl;
                     cout << "4. Eliminar accesorio" << endl;
-                    cout << "5. Salir" << endl;
+                    cout << "5. Volver" << endl;
                     cout << "Ingrese una opción: ";
                     cin >> opcionAccesorio;
                     if (opcionAccesorio == 1) {
@@ -144,7 +145,7 @@ void menu() {
                     cout << "2. Leer ambientes" << endl;
                     cout << "3. Modificar ambientes" << endl;
                     cout << "4. Eliminar ambiente" << endl;
-                    cout << "5. Salir" << endl;
+                    cout << "5. Volver" << endl;
                     cout << "Ingrese una opción: ";
                     cin >> opcionAmbiente;
                     if (opcionAmbiente == 1) {
@@ -164,6 +165,9 @@ void menu() {
                 } while(opcionAmbiente != 5);
                 break;
             case 4:
+                crearSoldado();
+                break;
+            case 5:
                 cout << "Saliendo" << endl;
                 break;
             default:
@@ -174,6 +178,7 @@ void menu() {
 }
 
 int main() {
+    leerArchivo();
     menu();
     return 0;
 }

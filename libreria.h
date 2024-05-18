@@ -34,6 +34,66 @@ struct soldado {
     ambiente *ambiente;
 };
 
+
+void leerArchivo() {
+    ifstream archivo;
+    string texto;
+    archivo.open("datos.txt", ios::in);
+    if (archivo.fail()) {
+        cout << "No se pudo abrir el archivo" << endl;
+        exit(1);
+    }
+    while (!archivo.eof()) {
+        getline(archivo, texto);
+        cout << texto << endl;
+    }
+    archivo.close();
+}
+
+void guardarEnArchivo() {
+    ofstream archivo;
+    archivo.open("datos.txt", ios::out);
+    if (archivo.fail()) {
+        cout << "No se pudo abrir el archivo" << endl;
+        exit(1);
+    }
+    raza *actualRaza = new raza();
+    actualRaza = primeroRaza;
+    if (primeroRaza != NULL) {
+        while (actualRaza != NULL) {
+            archivo << "Raza" << endl;
+            archivo << "Nombre: " << actualRaza -> nombre << endl;
+            archivo << "Energía: " << actualRaza -> energia << endl;
+            archivo << "Salud: " << actualRaza -> salud << endl;
+            archivo << "Ambiente: " << actualRaza -> ambiente << endl;
+            actualRaza = actualRaza -> siguiente;
+        }
+    }
+    accesorio *actualAccesorio = new accesorio();
+    actualAccesorio = primeroAccesorio;
+    if (primeroAccesorio != NULL) {
+        while (actualAccesorio != NULL) {
+            archivo << "Accesorio" << endl;
+            archivo << "Nombre: " << actualAccesorio -> nombre << endl;
+            archivo << "Tipo: " << actualAccesorio -> tipo << endl;
+            archivo << "Valor: " << actualAccesorio -> valor << endl;
+            archivo << "Energía: " << actualAccesorio -> energia << endl;
+            archivo << "Contenedor: " << actualAccesorio -> contenedor << endl;
+            actualAccesorio = actualAccesorio -> siguiente;
+        }
+    }
+    ambiente *actualAmbiente = new ambiente();
+    actualAmbiente = primeroAmbiente;
+    if (primeroAmbiente != NULL) {
+        while (actualAmbiente != NULL) {
+            archivo << "Ambiente" << endl;
+            archivo << "Nombre: " << actualAmbiente -> nombre << endl;
+            actualAmbiente = actualAmbiente -> siguiente;
+        }
+    }
+    archivo.close();
+}
+
 void crearRaza() {
     raza *nuevo = new raza();
     cout << "Ingrese el nombre de la raza: ";
@@ -53,7 +113,7 @@ void crearRaza() {
         nuevo -> siguiente = NULL;
         ultimoRaza = nuevo;
     }
-
+    guardarEnArchivo();
     cout << "Raza ingresada" << endl;
 }
 
@@ -138,6 +198,7 @@ void eliminarRaza() {
     }
 }
 
+
 void crearAccesorio() {
     accesorio *nuevo = new accesorio();
     cout << "Ingrese el nombre del accesorio: ";
@@ -160,7 +221,7 @@ void crearAccesorio() {
         nuevo -> siguiente = NULL;
         ultimoAccesorio = nuevo;
     }
-
+    guardarEnArchivo();
     cout << "Accesorio ingresado" << endl;
 }
 
@@ -250,6 +311,7 @@ void eliminarAccesorio() {
     }
 }
 
+
 void crearAmbiente() {
     ambiente *nuevo = new ambiente();
     cout << "Ingrese el nombre del ambiente: ";
@@ -264,7 +326,7 @@ void crearAmbiente() {
         nuevo -> siguiente = NULL;
         ultimoAmbiente = nuevo;
     }
-
+    guardarEnArchivo();
     cout << "Ambiente ingresado" << endl;
 }
 
@@ -342,6 +404,7 @@ void eliminarAmbiente() {
     }
 }
 
+
 void cargarAccesorios() {
     accesorio *actual = new accesorio();
     actual = primeroAccesorio;
@@ -357,12 +420,17 @@ void cargarAccesorios() {
     }
 }
 
+
 void crearSoldado() {
     soldado *nuevo = new soldado();
     cout << "Ingrese el nombre del soldado: ";
     cin >> nuevo -> nombre;
+    cout << "Razas disponibles: " << endl;
+    leerRaza();
     cout << "Ingrese la raza del soldado: ";
     cin >> nuevo -> raza -> nombre;
+    cout << "Ambientes disponibles: " << endl;
+    leerAmbiente();
     cout << "Ingrese el ambiente del soldado: ";
     cin >> nuevo -> ambiente -> nombre;
     cargarAccesorios();
