@@ -15,8 +15,9 @@ struct accesorio {
     string nombre;
     string tipo;
     int valor;
+    string recuperacion;
     int energia;
-    string contenedor;
+    int contenedor;
     accesorio *siguiente;
 } *primeroAccesorio, *ultimoAccesorio;
 
@@ -35,7 +36,7 @@ struct soldado {
 };
 
 
-void leerArchivo() {
+/* void leerArchivo() {
     ifstream archivo;
     string texto;
     archivo.open("datos.txt", ios::in);
@@ -48,9 +49,9 @@ void leerArchivo() {
         cout << texto << endl;
     }
     archivo.close();
-}
+} */
 
-void guardarEnArchivo() {
+/* void guardarEnArchivo() {
     ofstream archivo;
     archivo.open("datos.txt", ios::out);
     if (archivo.fail()) {
@@ -92,7 +93,9 @@ void guardarEnArchivo() {
         }
     }
     archivo.close();
-}
+} */
+
+
 
 void crearRaza() {
     raza *nuevo = new raza();
@@ -113,7 +116,7 @@ void crearRaza() {
         nuevo -> siguiente = NULL;
         ultimoRaza = nuevo;
     }
-    guardarEnArchivo();
+    // guardarEnArchivo();
     cout << "Raza ingresada" << endl;
 }
 
@@ -122,16 +125,17 @@ void leerRaza() {
     actual = primeroRaza;
     if (primeroRaza != NULL) {
         while (actual != NULL) {
-            cout << endl << "Nombre: " << actual -> nombre << endl;
-            cout << "Energía: " << actual -> energia << endl;
-            cout << "Salud: " << actual -> salud << endl;
-            cout << "Ambiente: " << actual -> ambiente << endl;
+            cout << endl << actual -> nombre << endl;
+            cout << actual -> energia << endl;
+            cout << actual -> salud << endl;
+            cout << actual -> ambiente << endl;
             actual = actual -> siguiente;
         }
     } else {
         cout << "La lista de razas se encuentra vacía" << endl;
     }
 }
+
 
 void modificarRaza() {
     raza *actual = new raza();
@@ -221,7 +225,7 @@ void crearAccesorio() {
         nuevo -> siguiente = NULL;
         ultimoAccesorio = nuevo;
     }
-    guardarEnArchivo();
+    // guardarEnArchivo();
     cout << "Accesorio ingresado" << endl;
 }
 
@@ -326,7 +330,7 @@ void crearAmbiente() {
         nuevo -> siguiente = NULL;
         ultimoAmbiente = nuevo;
     }
-    guardarEnArchivo();
+    // guardarEnArchivo();
     cout << "Ambiente ingresado" << endl;
 }
 
@@ -437,5 +441,44 @@ void crearSoldado() {
     for (int i = 0; i < 5; i++) {
         cout << "Ingrese el accesorio " << i + 1 << " del soldado: ";
         cin >> nuevo -> accesorios[i] -> nombre;
+    }
+}
+
+
+void leerArchivoRazas() {
+    ifstream archivo("razas.inv");
+    if (archivo.is_open()) {
+        string linea;
+        bool inicioEntrada = false;
+        while (getline(archivo, linea)) {
+            if (linea == "--") {
+                inicioEntrada = true;
+                continue;
+            }
+            if (inicioEntrada) {
+                // Procesa la información de la raza aquí
+                // Por ejemplo, extraer el nombre, energía, salud y ambiente
+                // Y añadirlos a una estructura de datos apropiada
+                inicioEntrada = false;
+            }
+        }
+        archivo.close();
+    } else {
+        cout << "No se pudo abrir el archivo de razas" << endl;
+    }
+}
+
+
+void guardarEnArchivoRazas(const raza& raza) {
+    ofstream archivo("razas.inv", ios::app); // Abre el archivo en modo append
+    if (archivo.is_open()) {
+        archivo << raza.nombre << "\n";
+        archivo << "Energia:" << raza.energia << "\n";
+        archivo << "Salud:" << raza.salud << "\n";
+        archivo << raza.ambiente << "\n";
+        archivo << "--\n"; // Indicador de fin de entrada
+        archivo.close();
+    } else {
+        cout << "No se pudo abrir el archivo de razas para escritura" << endl;
     }
 }
