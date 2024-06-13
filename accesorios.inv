@@ -1,163 +1,162 @@
 23
 --
-Blaster de Plasma
+Nombre:Blaster de Plasma
 Tipo:Ataque
 Valor:40
 Recuperación:
 Energia:20
 Contenedor:0
 --
-Escudo de Fase Pleunaral
+Nombre:Escudo de Fase Pleunaral
 Tipo:Defensa
 Valor:30
 Recuperación:
 Energia:40
 Contenedor:200
 --
-Generador de Campos de Distorsión
+Nombre:Generador de Campos de Distorsión
 Tipo:Defensa
 Valor:40
 Recuperación:
 Energia:20
 Contenedor:100
 --
-Visor de Espectro Vulcano
+Nombre:Visor de Espectro Vulcano
 Tipo:Condicionamiento
 Valor:0
 Recuperación:Vulcano
 Energia:0
 Contenedor:0
 --
-Traje de Adaptación Lunar
+Nombre:Traje de Adaptación Lunar
 Tipo:Condiciamiento
 Valor:0
 Recuperación:Lunar
 Energia:0
 Contenedor:0
 --
-Garras de Ácido
+Nombre:Garras de Ácido
 Tipo:Ataque
 Valor:15
 Recuperación:
 Energia:5
 Contenedor:0
 --
-Botas Gravitatorias
+Nombre:Botas Gravitatorias
 Tipo:Acondicionamiento
 Valor:0
 Recuperación:Atlante
 Energia:0
 Contenedor:0
 --
-Granada de Antimateria
+Nombre:Granada de Antimateria
 Tipo:Ataque
 Valor:80
 Recuperación:
 Energia:40
 Contenedor:0
 --
-Dispositivo de Terretransformador
+Nombre:Dispositivo de Terretransformador
 Tipo:Acondicionamiento
 Valor:0
 Recuperación:Tierra
 Energia:0
 Contenedor:0
 --
-Generador de Campo de Fuerza
+Nombre:Generador de Campo de Fuerza
 Tipo:Defensa
 Valor:70
 Recuperación:
 Energia:90
 Contenedor:0
 --
-Lanzallamas Criogénico
+Nombre:Lanzallamas Criogénico
 Tipo:Ataque
 Valor:100
 Recuperación:
 Energia:80
 Contenedor:0
 --
-Nanobots de Reparación
+Nombre:Nanobots de Reparación
 Tipo:Supervivencia
 Valor:200
 Recuperación:Salud
 Energia:60
 Contenedor:0
 --
-Armadura Bioadaptativa
+Nombre:Armadura Bioadaptativa
 Tipo:Supervivencia
 Valor:300
 Recuperación:Energia
 Energia:50
 Contenedor:0
 --
-Pistola Neural
+Nombre:Pistola Neural
 Tipo:Ataque
 Valor:20
 Recuperación:
 Energia:2
 Contenedor:0
 --
-Generador de Gravedad Inversa
+Nombre:Generador de Gravedad Inversa
 Tipo:Defensa
 Valor:30
 Recuperación:
 Energia:20
 Contenedor:100
 --
-Armadura de Nanofibras Regenerativas
+Nombre:Armadura de Nanofibras Regenerativas
 Tipo:Supervivencia
 Valor:40
 Recuperación:Salud
 Energia:20
 Contenedor:0
 --
-Cuchillo de Energía
+Nombre:Cuchillo de Energía
 Tipo:Ataque
 Valor:5
 Recuperación:
 Energia:0
 Contenedor:0
 --
-Mochila Propulsora misilistica
+Nombre:Mochila Propulsora misilistica
 Tipo:Ataque
 Valor:80
 Recuperación:
 Energia:20
 Contenedor:0
 --
-Mina de Singularidad
+Nombre:Mina de Singularidad
 Tipo:Ataque
 Valor:500
 Recuperación:
 Energia:300
 Contenedor:0
 --
-Botiquín Nanotecnológico
+Nombre:Botiquín Nanotecnológico
 Tipo:Supervivencia
 Valor:100
 Recuperación:
 Energia:30
 Contenedor:0
 --
-Armadura de Energía Cinética
+Nombre:Armadura de Energía Cinética
 Tipo:Defensa
 Valor:40
 Recuperación:
 Energia:20
 Contenedor:80
 --
-Escudo de Desmaterialización
+Nombre:Escudo de Desmaterialización
 Tipo:Defensa
 Valor:100
 Recuperación:
 Energia:110
 Contenedor:10
 --
-Bomba de Pulsos Electromagnéticos
+Nombre:Bomba de Pulsos Electromagnéticos
 Tipo:Ataque
 Valor:40
 Recuperación:
 Energia:20
 Contenedor:0
-
