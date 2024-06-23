@@ -1,5 +1,3 @@
-9
---
 Nombre:Zeta Reticulans
 Energia:150
 Salud:200
@@ -44,4 +42,9 @@ Nombre:Monstruo de Flatwoods
 Energia:800
 Salud:40
 Ambiente:Atlantes
+--
+Nombre:Humanos
+Energia:100
+Salud:100
+Ambiente:Tierra
 --

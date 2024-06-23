@@ -1,47 +1,115 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstdlib>
+#include <limits>
+
 
 using namespace std;
 
-struct raza {
+struct Raza {
     string nombre;
     int energia;
     int salud;
     string ambiente;
-    raza* siguiente;
-} *primeroRaza, *ultimoRaza;
+    Raza* siguiente;
+} *primeroRaza = nullptr, *ultimoRaza = nullptr;
 
-struct accesorio {
+struct Accesorio {
     string nombre;
     string tipo;
     int valor;
     string recuperacion;
     int energia;
     int contenedor;
-    accesorio* siguiente;
-} *primeroAccesorio, *ultimoAccesorio;
+    Accesorio* siguiente;
+} *primeroAccesorio = nullptr, *ultimoAccesorio = nullptr;
 
-struct ambiente {
+struct Ambiente {
     string nombre;
-    ambiente* siguiente;
-} *primeroAmbiente, *ultimoAmbiente;
+    Ambiente* siguiente;
+} *primeroAmbiente = nullptr, *ultimoAmbiente = nullptr;
 
-accesorio* accesorios[5];
+Accesorio* accesorios[5] = {nullptr};
 
-struct soldado {
+struct Soldado {
     string nombre;
-    raza* raza;
-    accesorio* accesorios[5];
-    ambiente* ambiente;
+    Raza* raza;
+    Accesorio* accesorios[5];
+    Ambiente* ambiente;
 };
+
+
+string validarString() {
+    string texto;
+    while (true) {
+        cin >> texto;
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Ingrese un dato valido: " << endl;
+        } else if (texto.length() == 0) {
+            cout << "Ingrese un dato valido: " << endl;
+        }
+        else {
+            return texto;
+        }
+    }
+}
+
+int validarNumero(string mensaje) {
+    int numero;
+    cout << mensaje;
+    while (true) {
+        cin >> numero;
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Ingrese un dato valido: " << endl;
+        } else {
+            return numero;
+        }
+    }
+}
+
+void leerAmbiente() {
+    Ambiente* actual = primeroAmbiente;
+    if (primeroAmbiente != nullptr) {
+        while (actual != nullptr) {
+            cout << endl << "Nombre: " << actual -> nombre << endl;
+            actual = actual -> siguiente;
+        }
+    } else {
+        cout << "La lista de ambientes se encuentra vacía" << endl;
+    }
+}
+
+void verificarAmbiente(string ambiente) {
+    Ambiente* actual = primeroAmbiente;
+    bool encontrado = false;
+    if (primeroAmbiente != nullptr) {
+        while (actual != nullptr && encontrado != true) {
+            if (actual -> nombre == ambiente) {
+                encontrado = true;
+            }
+            actual = actual -> siguiente;
+        }
+        if (!encontrado) {
+            cout << "Ambiente no encontrado" << endl;
+            cout << "Ambientes disponibles: " << endl;
+            leerAmbiente();
+        }
+    } else {
+        cout << "La lista de ambientes se encuentra vacía" << endl;
+    }
+}
 
 
 void leerArchivoRazas() {
     ifstream archivo("razas.inv");
     if (archivo.is_open()) {
         string linea;
-        raza* nuevaRaza = nullptr;
+        Raza* nuevaRaza = nullptr;
         while (getline(archivo, linea)) {
             if (linea == "--") {
                 if (nuevaRaza != nullptr) {
@@ -53,7 +121,7 @@ void leerArchivoRazas() {
                         ultimoRaza = nuevaRaza;
                     }
                 }
-                nuevaRaza = new raza();
+                nuevaRaza = new Raza();
             } else if (nuevaRaza != nullptr) {
                 size_t pos = linea.find(":");
                 if (pos != string::npos) {
@@ -75,7 +143,7 @@ void leerArchivoRazas() {
 void guardarEnArchivoRazas() {
     ofstream archivo("razas.inv", ios::out);
     if (archivo.is_open()) {
-        raza* actualRaza = primeroRaza;
+        Raza* actualRaza = primeroRaza;
         while (actualRaza != nullptr) {
             archivo << "Nombre:" << actualRaza->nombre << endl;
             archivo << "Energia:" << actualRaza->energia << endl;
@@ -86,19 +154,19 @@ void guardarEnArchivoRazas() {
         }
         archivo.close();
     } else {
-        cout << "No se pudo abrir el archivo de razas para escritura" << endl;
+        cout << "No se pudo abrir el archivo de razas" << endl;
     }
 }
 
 void crearRaza() {
-    raza* nuevo = new raza();
+    Raza* nuevo = new Raza();
     cout << "Ingrese el nombre de la raza: ";
-    cin >> nuevo -> nombre;
-    cout << "Ingrese la energía de la raza: ";
-    cin >> nuevo -> energia;
+    nuevo -> nombre = validarString();
+    nuevo -> energia = validarNumero("Ingrese la energía de la raza: ");
     nuevo -> salud = 100;
-    cout << "Ingrese el ambiente de la raza: ";
-    cin >> nuevo -> ambiente;
+    cout << "Ingrese el ambiente de la raza de la lista de ambientes disponibles: ";
+    nuevo -> ambiente = validarString();
+    verificarAmbiente(nuevo -> ambiente);
 
     if (primeroRaza == nullptr) {
         primeroRaza = nuevo;
@@ -110,11 +178,11 @@ void crearRaza() {
         ultimoRaza = nuevo;
     }
     guardarEnArchivoRazas();
-    cout << "Raza ingresada" << endl;
+    cout << "Raza creada" << endl;
 }
 
 void leerRaza() {
-    raza* actual = primeroRaza;
+    Raza* actual = primeroRaza;
     if (primeroRaza != nullptr) {
         while (actual != nullptr) {
             cout << endl << "Nombre: " << actual -> nombre << endl;
@@ -129,21 +197,21 @@ void leerRaza() {
 }
 
 void modificarRaza() {
-    raza* actual = primeroRaza;
+    Raza* actual = primeroRaza;
     bool encontrado = false;
     string razaBuscada;
     cout << "Ingrese el nombre de la raza a modificar: ";
-    cin >> razaBuscada;
+    razaBuscada = validarString();
     if (primeroRaza != nullptr) {
         while (actual != nullptr && encontrado != true) {
             if (actual -> nombre == razaBuscada) {
                 cout << "Raza con el nombre " << razaBuscada << " encontrada" << endl;
                 cout << "Ingrese el nuevo nombre: ";
-                cin >> actual -> nombre;
-                cout << "Ingrese la nueva energía: ";
-                cin >> actual -> energia;
+                actual -> nombre = validarString();
+                actual -> energia = validarNumero("Ingrese la nueva energía: ");
                 cout << "Ingrese el nuevo ambiente: ";
-                cin >> actual -> ambiente;
+                actual -> ambiente = validarString();
+                verificarAmbiente(actual -> ambiente);
                 cout << "Raza modificada" << endl;
                 encontrado = true;
             }
@@ -159,12 +227,12 @@ void modificarRaza() {
 }
 
 void eliminarRaza() {
-    raza* actual = primeroRaza;
-    raza* anterior = nullptr;
+    Raza* actual = primeroRaza;
+    Raza* anterior = nullptr;
     bool encontrado = false;
     string razaBuscada;
     cout << "Ingrese el nombre de la raza a eliminar: ";
-    cin >> razaBuscada;
+    razaBuscada = validarString();
     if (primeroRaza != nullptr) {
         while (actual != nullptr && encontrado != true) {
             if (actual -> nombre == razaBuscada) {
@@ -198,7 +266,7 @@ void leerArchivoAccesorios() {
     ifstream archivo("accesorios.inv");
     if (archivo.is_open()) {
         string linea;
-        accesorio* nuevoAccesorio = nullptr;
+        Accesorio* nuevoAccesorio = nullptr;
         while (getline(archivo, linea)) {
             if (linea == "--") {
                 if (nuevoAccesorio != nullptr) {
@@ -210,7 +278,7 @@ void leerArchivoAccesorios() {
                         ultimoAccesorio = nuevoAccesorio;
                     }
                 }
-                nuevoAccesorio = new accesorio();
+                nuevoAccesorio = new Accesorio();
             } else if (nuevoAccesorio != nullptr) {
                 size_t pos = linea.find(":");
                 if (pos != string::npos) {
@@ -235,7 +303,7 @@ void leerArchivoAccesorios() {
 void guardarEnArchivoAccesorios() {
     ofstream archivo("accesorios.inv", ios::out);
     if (archivo.is_open()) {
-        accesorio* actualAccesorio = primeroAccesorio;
+        Accesorio* actualAccesorio = primeroAccesorio;
         while (actualAccesorio != nullptr) {
             archivo << "Nombre:" << actualAccesorio->nombre << endl;
             archivo << "Tipo:" << actualAccesorio->tipo << endl;
@@ -248,22 +316,19 @@ void guardarEnArchivoAccesorios() {
         }
         archivo.close();
     } else {
-        cout << "No se pudo abrir el archivo de accesorios para escritura" << endl;
+        cout << "No se pudo abrir el archivo de accesorios" << endl;
     }
 }
 
 void crearAccesorio() {
-    accesorio* nuevo = new accesorio();
+    Accesorio* nuevo = new Accesorio();
     cout << "Ingrese el nombre del accesorio: ";
-    cin >> nuevo -> nombre;
+    nuevo -> nombre = validarString();
     cout << "Ingrese el tipo del accesorio: ";
-    cin >> nuevo -> tipo;
-    cout << "Ingrese el valor del accesorio: ";
-    cin >> nuevo -> valor;
-    cout << "Ingrese la energía del accesorio: ";
-    cin >> nuevo -> energia;
-    cout << "Ingrese el contenedor del accesorio: ";
-    cin >> nuevo -> contenedor;
+    nuevo -> tipo = validarString();
+    nuevo -> valor = validarNumero("Ingrese el valor del accesorio: ");
+    nuevo -> energia = validarNumero("Ingrese la energía del accesorio: ");
+    nuevo -> contenedor = validarNumero("Ingrese el contenedor del accesorio: ");
 
     if (primeroAccesorio == nullptr) {
         primeroAccesorio = nuevo;
@@ -275,11 +340,11 @@ void crearAccesorio() {
         ultimoAccesorio = nuevo;
     }
     guardarEnArchivoAccesorios();
-    cout << "Accesorio ingresado" << endl;
+    cout << "Accesorio creado" << endl;
 }
 
 void leerAccesorio() {
-    accesorio* actual = primeroAccesorio;
+    Accesorio* actual = primeroAccesorio;
     if (primeroAccesorio != nullptr) {
         while (actual != nullptr) {
             cout << endl << "Nombre: " << actual -> nombre << endl;
@@ -295,25 +360,22 @@ void leerAccesorio() {
 }
 
 void modificarAccesorio() {
-    accesorio* actual = primeroAccesorio;
+    Accesorio* actual = primeroAccesorio;
     bool encontrado = false;
     string accesorioBuscado;
     cout << "Ingrese el nombre del accesorio a modificar: ";
-    cin >> accesorioBuscado;
+    accesorioBuscado = validarString();
     if (primeroAccesorio != nullptr) {
         while (actual != nullptr && encontrado != true) {
             if (actual -> nombre == accesorioBuscado) {
                 cout << "Accesorio con el nombre " << accesorioBuscado << " encontrado" << endl;
                 cout << "Ingrese el nuevo nombre: ";
-                cin >> actual -> nombre;
+                actual -> nombre = validarString();
                 cout << "Ingrese el nuevo tipo: ";
-                cin >> actual -> tipo;
-                cout << "Ingrese el nuevo valor: ";
-                cin >> actual -> valor;
-                cout << "Ingrese la nueva energía: ";
-                cin >> actual -> energia;
-                cout << "Ingrese el nuevo contenedor: ";
-                cin >> actual -> contenedor;
+                actual -> tipo = validarString();
+                actual -> valor = validarNumero("Ingrese el nuevo valor: ");
+                actual -> energia = validarNumero("Ingrese la nueva energía: ");
+                actual -> contenedor = validarNumero("Ingrese el nuevo contenedor: ");
                 cout << "Accesorio modificado" << endl;
                 encontrado = true;
             }
@@ -329,12 +391,12 @@ void modificarAccesorio() {
 }
 
 void eliminarAccesorio() {
-    accesorio* actual = primeroAccesorio;
-    accesorio* anterior = nullptr;
+    Accesorio* actual = primeroAccesorio;
+    Accesorio* anterior = nullptr;
     bool encontrado = false;
     string accesorioBuscado;
     cout << "Ingrese el nombre del accesorio a eliminar: ";
-    cin >> accesorioBuscado;
+    accesorioBuscado = validarString();
     if (primeroAccesorio != nullptr) {
         while (actual != nullptr && encontrado != true) {
             if (actual -> nombre == accesorioBuscado) {
@@ -368,7 +430,7 @@ void leerArchivoAmbiente() {
     ifstream archivo("ambiente.inv");
     if (archivo.is_open()) {
         string linea;
-        ambiente* nuevoAmbiente = nullptr;
+        Ambiente* nuevoAmbiente = nullptr;
         while (getline(archivo, linea)) {
             if (linea == "--") {
                 if (nuevoAmbiente != nullptr) {
@@ -380,7 +442,7 @@ void leerArchivoAmbiente() {
                         ultimoAmbiente = nuevoAmbiente;
                     }
                 }
-                nuevoAmbiente = new ambiente();
+                nuevoAmbiente = new Ambiente();
             } else if (nuevoAmbiente != nullptr) {
                 size_t pos = linea.find(":");
                 if (pos != string::npos) {
@@ -399,7 +461,7 @@ void leerArchivoAmbiente() {
 void guardarEnArchivoAmbiente() {
     ofstream archivo("ambiente.inv", ios::out);
     if (archivo.is_open()) {
-        ambiente* actualAmbiente = primeroAmbiente;
+        Ambiente* actualAmbiente = primeroAmbiente;
         while (actualAmbiente != nullptr) {
             archivo << "Nombre:" << actualAmbiente->nombre << endl;
             archivo << "--" << endl;
@@ -407,14 +469,14 @@ void guardarEnArchivoAmbiente() {
         }
         archivo.close();
     } else {
-        cout << "No se pudo abrir el archivo de ambientes para escritura" << endl;
+        cout << "No se pudo abrir el archivo de ambientes" << endl;
     }
 }
 
 void crearAmbiente() {
-    ambiente* nuevo = new ambiente();
+    Ambiente* nuevo = new Ambiente();
     cout << "Ingrese el nombre del ambiente: ";
-    cin >> nuevo -> nombre;
+    nuevo -> nombre = validarString();
 
     if (primeroAmbiente == nullptr) {
         primeroAmbiente = nuevo;
@@ -426,33 +488,21 @@ void crearAmbiente() {
         ultimoAmbiente = nuevo;
     }
     guardarEnArchivoAmbiente();
-    cout << "Ambiente ingresado" << endl;
-}
-
-void leerAmbiente() {
-    ambiente* actual = primeroAmbiente;
-    if (primeroAmbiente != nullptr) {
-        while (actual != nullptr) {
-            cout << endl << "Nombre: " << actual -> nombre << endl;
-            actual = actual -> siguiente;
-        }
-    } else {
-        cout << "La lista de ambientes se encuentra vacía" << endl;
-    }
+    cout << "Ambiente creado" << endl;
 }
 
 void modificarAmbiente() {
-    ambiente* actual = primeroAmbiente;
+    Ambiente* actual = primeroAmbiente;
     bool encontrado = false;
     string ambienteBuscado;
     cout << "Ingrese el nombre del ambiente a modificar: ";
-    cin >> ambienteBuscado;
+    ambienteBuscado = validarString();
     if (primeroAmbiente != nullptr) {
         while (actual != nullptr && encontrado != true) {
             if (actual -> nombre == ambienteBuscado) {
                 cout << "Ambiente con el nombre " << ambienteBuscado << " encontrado" << endl;
                 cout << "Ingrese el nuevo nombre: ";
-                cin >> actual -> nombre;
+                actual -> nombre = validarString();
                 cout << "Ambiente modificado" << endl;
                 encontrado = true;
             }
@@ -468,12 +518,12 @@ void modificarAmbiente() {
 }
 
 void eliminarAmbiente() {
-    ambiente* actual = primeroAmbiente;
-    ambiente* anterior = nullptr;
+    Ambiente* actual = primeroAmbiente;
+    Ambiente* anterior = nullptr;
     bool encontrado = false;
     string ambienteBuscado;
     cout << "Ingrese el nombre del ambiente a eliminar: ";
-    cin >> ambienteBuscado;
+    ambienteBuscado = validarString();
     if (primeroAmbiente != nullptr) {
         while (actual != nullptr && encontrado != true) {
             if (actual -> nombre == ambienteBuscado) {
@@ -503,37 +553,76 @@ void eliminarAmbiente() {
 }
 
 
-void cargarAccesorios() {
-    accesorio *actual = new accesorio();
-    actual = primeroAccesorio;
-    int i = 0;
-    if (primeroAccesorio != NULL) {
-        while (actual != NULL) {
-            accesorios[i] = actual;
-            i++;
-            actual = actual -> siguiente;
-        }
-    } else {
-        cout << "La lista de accesorios se encuentra vacía" << endl;
-    }
-}
-
 
 void crearSoldado() {
-    soldado *nuevo = new soldado();
+    Soldado* nuevo = new Soldado();
     cout << "Ingrese el nombre del soldado: ";
-    cin >> nuevo -> nombre;
-    cout << "Razas disponibles: " << endl;
-    leerRaza();
+    nuevo -> nombre = validarString();
     cout << "Ingrese la raza del soldado: ";
-    cin >> nuevo -> raza -> nombre;
-    cout << "Ambientes disponibles: " << endl;
-    leerAmbiente();
+    string raza = validarString();
+    Raza* actualRaza = primeroRaza;
+    bool encontradoRaza = false;
+    while (actualRaza != nullptr && encontradoRaza != true) {
+        if (actualRaza -> nombre == raza) {
+            nuevo -> raza = actualRaza;
+            encontradoRaza = true;
+        }
+        actualRaza = actualRaza -> siguiente;
+    }
+    if (!encontradoRaza) {
+        cout << "Raza no encontrada" << endl;
+        cout << "Razas disponibles: " << endl;
+        leerRaza();
+        return;
+    }
     cout << "Ingrese el ambiente del soldado: ";
-    cin >> nuevo -> ambiente -> nombre;
-    cargarAccesorios();
+    string ambiente = validarString();
+    Ambiente* actualAmbiente = primeroAmbiente;
+    bool encontradoAmbiente = false;
+    while (actualAmbiente != nullptr && encontradoAmbiente != true) {
+        if (actualAmbiente -> nombre == ambiente) {
+            nuevo -> ambiente = actualAmbiente;
+            encontradoAmbiente = true;
+        }
+        actualAmbiente = actualAmbiente -> siguiente;
+    }
+    if (!encontradoAmbiente) {
+        cout << "Ambiente no encontrado" << endl;
+        cout << "Ambientes disponibles: " << endl;
+        leerAmbiente();
+        return;
+    }
     for (int i = 0; i < 5; i++) {
-        cout << "Ingrese el accesorio " << i + 1 << " del soldado: ";
-        cin >> nuevo -> accesorios[i] -> nombre;
+        cout << "Ingrese el nombre del accesorio " << i + 1 << ": ";
+        string accesorio = validarString();
+        Accesorio* actualAccesorio = primeroAccesorio;
+        bool encontradoAccesorio = false;
+        while (actualAccesorio != nullptr && encontradoAccesorio != true) {
+            if (actualAccesorio -> nombre == accesorio) {
+                nuevo -> accesorios[i] = actualAccesorio;
+                encontradoAccesorio = true;
+            }
+            actualAccesorio = actualAccesorio -> siguiente;
+        }
+        if (!encontradoAccesorio) {
+            cout << "Accesorio no encontrado" << endl;
+            cout << "Accesorios disponibles: " << endl;
+            leerAccesorio();
+            return;
+        }
+    }
+    ofstream archivo("soldados.inv", ios::app);
+    if (archivo.is_open()) {
+        archivo << "Nombre:" << nuevo->nombre << endl;
+        archivo << "Raza:" << nuevo->raza->nombre << endl;
+        archivo << "Ambiente:" << nuevo->ambiente->nombre << endl;
+        for (int i = 0; i < 5; i++) {
+            archivo << "Accesorio" << i + 1 << ":" << nuevo->accesorios[i]->nombre << endl;
+        }
+        archivo << "--" << endl;
+        archivo.close();
+        cout << "Soldado creado" << endl;
+    } else {
+        cout << "No se pudo abrir el archivo de soldados" << endl;
     }
 }
