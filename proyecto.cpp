@@ -11,6 +11,7 @@ Integrantes:
 
 using namespace std;
 
+
 void menu() {
     int opcion;
     do {
@@ -20,8 +21,7 @@ void menu() {
         cout << "3. Acciones para ambiente" << endl;
         cout << "4. Crear soldado" << endl;
         cout << "5. Salir" << endl;
-        cout << "Ingrese una opción: ";
-        cin >> opcion;
+        opcion = validarNumero("Ingrese una opción: ");
         switch (opcion) {
             case 1:
                 int opcionRaza;
@@ -31,8 +31,7 @@ void menu() {
                     cout << "3. Modificar razas" << endl;
                     cout << "4. Eliminar raza" << endl;
                     cout << "5. Volver" << endl;
-                    cout << "Ingrese una opción: ";
-                    cin >> opcionRaza;
+                    opcionRaza = validarNumero("Ingrese una opción: ");
                     if (opcionRaza == 1) {
                         crearRaza();
                     } else if (opcionRaza == 2) {
@@ -57,8 +56,7 @@ void menu() {
                     cout << "3. Modificar accesorios" << endl;
                     cout << "4. Eliminar accesorio" << endl;
                     cout << "5. Volver" << endl;
-                    cout << "Ingrese una opción: ";
-                    cin >> opcionAccesorio;
+                    opcionAccesorio = validarNumero("Ingrese una opción: ");
                     if (opcionAccesorio == 1) {
                         crearAccesorio();
                     } else if (opcionAccesorio == 2) {
@@ -83,8 +81,7 @@ void menu() {
                     cout << "3. Modificar ambientes" << endl;
                     cout << "4. Eliminar ambiente" << endl;
                     cout << "5. Volver" << endl;
-                    cout << "Ingrese una opción: ";
-                    cin >> opcionAmbiente;
+                    opcionAmbiente = validarNumero("Ingrese una opción: ");
                     if (opcionAmbiente == 1) {
                         crearAmbiente();
                     } else if (opcionAmbiente == 2) {
@@ -116,6 +113,11 @@ void menu() {
 }
 
 int main() {
+
+    leerArchivoRazas();
+    leerArchivoAccesorios();
+    leerArchivoAmbiente();
+
     menu();
     return 0;
 }
