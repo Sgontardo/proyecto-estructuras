@@ -30,12 +30,10 @@ struct Ambiente {
     Ambiente* siguiente;
 } *primeroAmbiente = nullptr, *ultimoAmbiente = nullptr;
 
-Accesorio* accesorios[5] = {nullptr};
-
 struct Soldado {
     string nombre;
     Raza* raza;
-    Accesorio* accesorios[5];
+    Accesorio* mochila[5];
     Ambiente* ambiente;
 };
 
@@ -553,76 +551,125 @@ void eliminarAmbiente() {
 }
 
 
+Raza* devolverRaza() {
+    string raza;
+    cout << "Ingrese la raza del soldado: ";
+    cin >> raza;
+    Raza* actual = primeroRaza;
+    while (actual != nullptr) {
+        if (actual -> nombre == raza) {
+            return actual;
+        }
+        actual = actual -> siguiente;
+    }
+    return nullptr;
+}
+
+bool verificarAccesorios(){
+    int i = 0;
+    Accesorio* actual = primeroAccesorio;
+    if (primeroAccesorio != nullptr) {
+        while (actual != nullptr) {
+            i += 1;
+            actual = actual -> siguiente;
+        }
+        if(i > 4){
+            return true;
+        }
+        else{
+            return false;
+        }
+    } else {
+        cout << "La lista de accesorios se encuentra vacía" << endl;
+    }
+}
+
+void cargarAccesorios() {
+    Accesorio* actual = primeroAccesorio;
+    if (primeroAccesorio != nullptr) {
+        while (actual != nullptr) {
+            cout << endl << "Nombre: " << actual -> nombre << endl;
+            cout << "Tipo: " << actual -> tipo << endl;
+            cout << "Valor: " << actual -> valor << endl;
+            cout << "Energía: " << actual -> energia << endl;
+            cout << "Contenedor: " << actual -> contenedor << endl;
+            actual = actual -> siguiente;
+        }
+    } else {
+        cout << "La lista de accesorios se encuentra vacía" << endl;
+    }
+}
+
+Accesorio* buscarAccesorio(string nombre) {
+    Accesorio* actual = primeroAccesorio;
+    while (actual != nullptr) {
+        if (actual -> nombre == nombre) {
+            return actual;
+        }
+        actual = actual -> siguiente;
+    }
+    return nullptr;
+}
+
+int cantidadAccesorios() {
+    Accesorio* actual = primeroAccesorio;
+    int cantidad = 0;
+    while (actual != nullptr) {
+        cantidad++;
+        actual = actual -> siguiente;
+    }
+    return cantidad;
+}
+
 
 void crearSoldado() {
-    Soldado* nuevo = new Soldado();
+    Soldado *nuevo = new Soldado();
     cout << "Ingrese el nombre del soldado: ";
-    nuevo -> nombre = validarString();
-    cout << "Ingrese la raza del soldado: ";
-    string raza = validarString();
-    Raza* actualRaza = primeroRaza;
-    bool encontradoRaza = false;
-    while (actualRaza != nullptr && encontradoRaza != true) {
-        if (actualRaza -> nombre == raza) {
-            nuevo -> raza = actualRaza;
-            encontradoRaza = true;
-        }
-        actualRaza = actualRaza -> siguiente;
+    cin >> nuevo -> nombre;
+    cout << "Razas disponibles: " << endl;
+    leerRaza();
+    Raza* race = devolverRaza();
+    while (race == nullptr){
+        cout << "Ingrese una raza valido: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        race = devolverRaza();
     }
-    if (!encontradoRaza) {
-        cout << "Raza no encontrada" << endl;
-        cout << "Razas disponibles: " << endl;
-        leerRaza();
-        return;
-    }
-    cout << "Ingrese el ambiente del soldado: ";
-    string ambiente = validarString();
-    Ambiente* actualAmbiente = primeroAmbiente;
-    bool encontradoAmbiente = false;
-    while (actualAmbiente != nullptr && encontradoAmbiente != true) {
-        if (actualAmbiente -> nombre == ambiente) {
-            nuevo -> ambiente = actualAmbiente;
-            encontradoAmbiente = true;
-        }
-        actualAmbiente = actualAmbiente -> siguiente;
-    }
-    if (!encontradoAmbiente) {
-        cout << "Ambiente no encontrado" << endl;
-        cout << "Ambientes disponibles: " << endl;
-        leerAmbiente();
-        return;
-    }
-    for (int i = 0; i < 5; i++) {
-        cout << "Ingrese el nombre del accesorio " << i + 1 << ": ";
-        string accesorio = validarString();
-        Accesorio* actualAccesorio = primeroAccesorio;
-        bool encontradoAccesorio = false;
-        while (actualAccesorio != nullptr && encontradoAccesorio != true) {
-            if (actualAccesorio -> nombre == accesorio) {
-                nuevo -> accesorios[i] = actualAccesorio;
-                encontradoAccesorio = true;
-            }
-            actualAccesorio = actualAccesorio -> siguiente;
-        }
-        if (!encontradoAccesorio) {
-            cout << "Accesorio no encontrado" << endl;
-            cout << "Accesorios disponibles: " << endl;
-            leerAccesorio();
-            return;
-        }
-    }
-    ofstream archivo("soldados.inv", ios::app);
-    if (archivo.is_open()) {
-        archivo << "Nombre:" << nuevo->nombre << endl;
-        archivo << "Raza:" << nuevo->raza->nombre << endl;
-        archivo << "Ambiente:" << nuevo->ambiente->nombre << endl;
+    nuevo -> raza = race;
+    cout << "Ambiente del soldado por consecuencia a su raza: "<< nuevo -> raza -> ambiente << endl;
+
+    if (verificarAccesorios()){
+        cargarAccesorios();
         for (int i = 0; i < 5; i++) {
-            archivo << "Accesorio" << i + 1 << ":" << nuevo->accesorios[i]->nombre << endl;
+            string accesorioName;
+            cout << "Ingrese el accesorio " << i + 1 << " del soldado: ";
+            cin >> accesorioName;
+            Accesorio* acc = buscarAccesorio(accesorioName);
+            if (acc != nullptr) {
+                nuevo -> mochila[i] = acc;
+            } else {
+                cout << "Accesorio no encontrado." << endl;
+                i--;
+            }
         }
-        archivo << "--" << endl;
-        archivo.close();
-        cout << "Soldado creado" << endl;
-    } else {
-        cout << "No se pudo abrir el archivo de soldados" << endl;
+    }
+    else{
+        cout << "El soldado necesita minimo 5 accesorios";
+        while(cantidadAccesorios() < 5){
+            crearAccesorio();
+        }
+        cargarAccesorios();
+        for (int i = 0; i < 5; i++) {
+            string accesorioName;
+            cout << "Ingrese el accesorio " << i + 1 << " del soldado: ";
+            cin >> accesorioName;
+            Accesorio* acc = buscarAccesorio(accesorioName);
+            if (acc != nullptr) {
+                nuevo -> mochila[i] = acc;
+            } else {
+                cout << "Accesorio no encontrado." << endl;
+                i--;
+            }
+        }
     }
 }
