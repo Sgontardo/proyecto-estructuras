@@ -19,7 +19,7 @@ void menu() {
         cout << "1. Acciones para raza" << endl;
         cout << "2. Acciones para accesorio" << endl;
         cout << "3. Acciones para ambiente" << endl;
-        cout << "4. Crear soldado" << endl;
+        cout << "4. Acciones para soldado" << endl;
         cout << "5. Salir" << endl;
         opcion = validarNumero("Ingrese una opción: ");
         switch (opcion) {
@@ -33,7 +33,18 @@ void menu() {
                     cout << "5. Volver" << endl;
                     opcionRaza = validarNumero("Ingrese una opción: ");
                     if (opcionRaza == 1) {
-                        crearRaza();
+                        if (ambienteVacio() == true) {
+                            cout
+                                    << "La lista de ambientes esta vacia y se requiere de por lo menos uno para crear una raza."
+                                    << endl;
+                            crearAmbiente();
+                            cout << endl;
+                            cout << "Ahora si! Cree la raza" << endl;
+                            crearRaza();
+                        }
+                        else{
+                            crearRaza();
+                        }
                     } else if (opcionRaza == 2) {
                         leerRaza();
                     } else if (opcionRaza == 3) {
@@ -46,7 +57,7 @@ void menu() {
                     } else {
                         cout << "Ingrese una opción válida" << endl;
                     }
-} while(opcionRaza != 5);
+                } while(opcionRaza != 5);
                 break;
             case 2:
                 int opcionAccesorio;
@@ -99,7 +110,53 @@ void menu() {
                 } while(opcionAmbiente != 5);
                 break;
             case 4:
-                crearSoldado();
+                int opcionSoldado;
+                do {
+                    cout << "1. Crear soldado" << endl;
+                    cout << "2. Leer soldados" << endl;
+                    cout << "3. Modificar soldados" << endl;
+                    cout << "4. Eliminar soldados" << endl;
+                    cout << "5. Volver" << endl;
+                    opcionSoldado = validarNumero("Ingrese una opción: ");
+                    if (opcionSoldado == 1) {
+                        if (RazaVacio() == true) {
+                            cout
+                                    << "La lista de razas esta vacia y se requiere de por lo menos una para crear un soldado."
+                                    << endl;
+                            if (ambienteVacio() == true) {
+                                cout
+                                        << "La lista de ambientes esta vacia y se requiere de por lo menos uno para crear una raza."
+                                        << endl;
+                                crearAmbiente();
+                                cout << endl;
+                                cout << "Ahora si! Cree la raza" << endl;
+                                crearRaza();
+                            }
+                            else{
+                                crearRaza();
+                            }
+                            cout << endl;
+                            cout << "Ahora si! Cree su soldado" << endl;
+                            crearSoldado();
+                        }
+                        else{
+                            crearSoldado();
+                        }
+                        break;
+
+                    } else if (opcionSoldado == 2) {
+                        leerSoldado();
+                    } else if (opcionSoldado == 3) {
+                        modificarSoldado();
+                    } else if (opcionSoldado == 4) {
+                        eliminarSoldado();
+                    } else if (opcionSoldado == 5) {
+                        cout << "Volviendo" << endl;
+                        break;
+                    } else {
+                        cout << "Ingrese una opción válida" << endl;
+                    }
+                } while(opcionAmbiente != 5);
                 break;
             case 5:
                 cout << "Saliendo" << endl;
@@ -117,6 +174,7 @@ int main() {
     leerArchivoRazas();
     leerArchivoAccesorios();
     leerArchivoAmbiente();
+    leerArchivoSoldados();
 
     menu();
     return 0;
