@@ -16,10 +16,10 @@ void menu() {
     int opcion;
     do {
         cout << endl << "Menú" << endl;
-        cout << "1. Acciones para raza" << endl;
-        cout << "2. Acciones para accesorio" << endl;
-        cout << "3. Acciones para ambiente" << endl;
-        cout << "4. Acciones para soldado" << endl;
+        cout << "1. Acciones para razas" << endl;
+        cout << "2. Acciones para accesorios" << endl;
+        cout << "3. Acciones para ambientes" << endl;
+        cout << "4. Ir a la Guerra!!" << endl;
         cout << "5. Salir" << endl;
         opcion = validarNumero("Ingrese una opción: ");
         switch (opcion) {
@@ -112,10 +112,8 @@ void menu() {
             case 4:
                 int opcionSoldado;
                 do {
-                    cout << "1. Crear soldado" << endl;
+                    cout << "1. Crear soldados" << endl;
                     cout << "2. Leer soldados" << endl;
-                    cout << "3. Modificar soldados" << endl;
-                    cout << "4. Eliminar soldados" << endl;
                     cout << "5. Volver" << endl;
                     opcionSoldado = validarNumero("Ingrese una opción: ");
                     if (opcionSoldado == 1) {
@@ -137,19 +135,15 @@ void menu() {
                             }
                             cout << endl;
                             cout << "Ahora si! Cree su soldado" << endl;
-                            crearSoldado();
+                            // crearSoldado();
                         }
                         else{
-                            crearSoldado();
+                            // crearSoldado();
                         }
                         break;
 
                     } else if (opcionSoldado == 2) {
                         leerSoldado();
-                    } else if (opcionSoldado == 3) {
-                        modificarSoldado();
-                    } else if (opcionSoldado == 4) {
-                        eliminarSoldado();
                     } else if (opcionSoldado == 5) {
                         cout << "Volviendo" << endl;
                         break;
@@ -173,8 +167,7 @@ int main() {
 
     leerArchivoRazas();
     leerArchivoAccesorios();
-    leerArchivoAmbiente();
-    leerArchivoSoldados();
+    leerArchivoAmbientes();
 
     menu();
     return 0;

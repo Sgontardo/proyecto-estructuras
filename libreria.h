@@ -35,9 +35,15 @@ struct Soldado {
     Raza* raza;
     Accesorio* mochila[5];
     string ambiente;
+    int salud;
+    int energia;
     Soldado* siguiente;
+    int equipo;
 } *primeroSoldado = nullptr, *ultimoSoldado = nullptr;
 
+struct Equipo {
+    Soldado* soldados[3];
+};
 
 
 string validarString() {
@@ -84,6 +90,26 @@ void leerAmbiente() {
     }
 }
 
+// Crear una funcion que solo lea el nombre del ambiente del archivo ambiente.inv
+
+void mostrarAmbientes() {
+    ifstream archivo("ambiente.inv");
+    if (archivo.is_open()) {
+        string linea;
+        while (getline(archivo, linea)) {
+            if (linea == "--") {
+                cout << endl;
+            } else {
+                cout << linea << endl;
+            }
+        }
+        archivo.close();
+    } else {
+        cout << "No se pudo abrir el archivo de ambientes" << endl;
+    }
+
+}
+
 void verificarAmbiente(string ambiente) {
     Ambiente* actual = primeroAmbiente;
     bool encontrado = false;
@@ -98,7 +124,7 @@ void verificarAmbiente(string ambiente) {
             while (!encontrado) {
                 cout << "Ambiente no encontrado" << endl;
                 cout << "Ambientes disponibles: " << endl;
-                leerAmbiente();
+                mostrarAmbientes();
                 cout << "Ingrese el ambiente de la raza de la lista de ambientes disponibles: ";
                 ambiente = validarString();
                 actual = primeroAmbiente;
@@ -120,7 +146,11 @@ void verificarAmbiente(string ambiente) {
 void leerArchivoRazas() {
     ifstream archivo("razas.inv");
     if (archivo.is_open()) {
+        int cantidadRazas;
         string linea;
+        archivo >> cantidadRazas;
+        getline(archivo, linea);
+        getline(archivo, linea);
         Raza* nuevaRaza = nullptr;
         while (getline(archivo, linea)) {
             if (linea == "--") {
@@ -139,10 +169,10 @@ void leerArchivoRazas() {
                 if (pos != string::npos) {
                     string key = linea.substr(0, pos);
                     string value = linea.substr(pos + 1);
-                    if (key == "Nombre") nuevaRaza->nombre = value;
-                    else if (key == "Energia") nuevaRaza->energia = stoi(value);
+                    if (key == "Energia") nuevaRaza->energia = stoi(value);
                     else if (key == "Salud") nuevaRaza->salud = stoi(value);
                     else if (key == "Ambiente") nuevaRaza->ambiente = value;
+                    else nuevaRaza->nombre = key;
                 }
             }
         }
@@ -150,14 +180,24 @@ void leerArchivoRazas() {
     } else {
         cout << "No se pudo abrir el archivo de razas" << endl;
     }
+
+
 }
 
 void guardarEnArchivoRazas() {
     ofstream archivo("razas.inv", ios::out);
     if (archivo.is_open()) {
+        int cantidadRazas = 0;
+        Raza* tempRaza = primeroRaza;
+        while (tempRaza != nullptr) {
+            cantidadRazas++;
+            tempRaza = tempRaza->siguiente;
+        }
+        archivo << cantidadRazas << endl;
+        archivo << "--" << endl;
         Raza* actualRaza = primeroRaza;
         while (actualRaza != nullptr) {
-            archivo << "Nombre:" << actualRaza->nombre << endl;
+            archivo << actualRaza->nombre << endl;
             archivo << "Energia:" << actualRaza->energia << endl;
             archivo << "Salud:" << actualRaza->salud << endl;
             archivo << "Ambiente:" << actualRaza->ambiente << endl;
@@ -177,7 +217,7 @@ void crearRaza() {
     nuevo -> energia = validarNumero("Ingrese la energía de la raza: ");
     nuevo -> salud = 100;
     cout << "Ingrese el ambiente de la raza de la lista de ambientes disponibles: ";
-    leerAmbiente();
+    mostrarAmbientes();
     nuevo -> ambiente = validarString();
     verificarAmbiente(nuevo -> ambiente);
 
@@ -297,7 +337,11 @@ bool RazaVacio(){
 void leerArchivoAccesorios() {
     ifstream archivo("accesorios.inv");
     if (archivo.is_open()) {
+        int cantidadAccesorios;
         string linea;
+        archivo >> cantidadAccesorios;
+        getline(archivo, linea);
+        getline(archivo, linea);
         Accesorio* nuevoAccesorio = nullptr;
         while (getline(archivo, linea)) {
             if (linea == "--") {
@@ -316,12 +360,12 @@ void leerArchivoAccesorios() {
                 if (pos != string::npos) {
                     string key = linea.substr(0, pos);
                     string value = linea.substr(pos + 1);
-                    if (key == "Nombre") nuevoAccesorio->nombre = value;
-                    else if (key == "Tipo") nuevoAccesorio->tipo = value;
+                    if (key == "Tipo") nuevoAccesorio->tipo = value;
                     else if (key == "Valor") nuevoAccesorio->valor = stoi(value);
                     else if (key == "Recuperacion") nuevoAccesorio->recuperacion = value;
                     else if (key == "Energia") nuevoAccesorio->energia = stoi(value);
                     else if (key == "Contenedor") nuevoAccesorio->contenedor = stoi(value);
+                    else nuevoAccesorio->nombre = key;
                 }
             }
         }
@@ -329,15 +373,22 @@ void leerArchivoAccesorios() {
     } else {
         cout << "No se pudo abrir el archivo de accesorios" << endl;
     }
-
 }
 
 void guardarEnArchivoAccesorios() {
     ofstream archivo("accesorios.inv", ios::out);
     if (archivo.is_open()) {
+        int cantidadAccesorios = 0;
+        Accesorio* tempAccesorio = primeroAccesorio;
+        while (tempAccesorio != nullptr) {
+            cantidadAccesorios++;
+            tempAccesorio = tempAccesorio->siguiente;
+        }
+        archivo << cantidadAccesorios << endl;
+        archivo << "--" << endl;
         Accesorio* actualAccesorio = primeroAccesorio;
         while (actualAccesorio != nullptr) {
-            archivo << "Nombre:" << actualAccesorio->nombre << endl;
+            archivo << actualAccesorio->nombre << endl;
             archivo << "Tipo:" << actualAccesorio->tipo << endl;
             archivo << "Valor:" << actualAccesorio->valor << endl;
             archivo << "Recuperacion:" << actualAccesorio->recuperacion << endl;
@@ -458,10 +509,14 @@ void eliminarAccesorio() {
 }
 
 
-void leerArchivoAmbiente() {
-    ifstream archivo("ambiente.inv");
+void leerArchivoAmbientes() {
+    ifstream archivo("ambientes.inv");
     if (archivo.is_open()) {
+        int cantidadAmbientes;
         string linea;
+        archivo >> cantidadAmbientes;
+        getline(archivo, linea);
+        getline(archivo, linea);
         Ambiente* nuevoAmbiente = nullptr;
         while (getline(archivo, linea)) {
             if (linea == "--") {
@@ -476,12 +531,7 @@ void leerArchivoAmbiente() {
                 }
                 nuevoAmbiente = new Ambiente();
             } else if (nuevoAmbiente != nullptr) {
-                size_t pos = linea.find(":");
-                if (pos != string::npos) {
-                    string key = linea.substr(0, pos);
-                    string value = linea.substr(pos + 1);
-                    if (key == "Nombre") nuevoAmbiente->nombre = value;
-                }
+                nuevoAmbiente->nombre = linea;
             }
         }
         archivo.close();
@@ -491,11 +541,19 @@ void leerArchivoAmbiente() {
 }
 
 void guardarEnArchivoAmbiente() {
-    ofstream archivo("ambiente.inv", ios::out);
+    ofstream archivo("ambientes.inv", ios::out);
     if (archivo.is_open()) {
+        int cantidadAmbientes = 0;
+        Ambiente* tempAmbiente = primeroAmbiente;
+        while (tempAmbiente != nullptr) {
+            cantidadAmbientes++;
+            tempAmbiente = tempAmbiente->siguiente;
+        }
+        archivo << cantidadAmbientes << endl;
+        archivo << "--" << endl;
         Ambiente* actualAmbiente = primeroAmbiente;
         while (actualAmbiente != nullptr) {
-            archivo << "Nombre:" << actualAmbiente->nombre << endl;
+            archivo << actualAmbiente->nombre << endl;
             archivo << "--" << endl;
             actualAmbiente = actualAmbiente->siguiente;
         }
@@ -655,98 +713,50 @@ int cantidadAccesorios() {
     return cantidad;
 }
 
-
-void leerArchivoSoldados() {
-    ifstream archivo("soldados.inv");
+void mostrarRazas() {
+    ifstream archivo("razas.inv");
     if (archivo.is_open()) {
         string linea;
-        Soldado* nuevoSoldado = nullptr;
         while (getline(archivo, linea)) {
             if (linea == "--") {
-                if (nuevoSoldado != nullptr) {
-                    if (primeroSoldado == nullptr) {
-                        primeroSoldado = nuevoSoldado;
-                        ultimoSoldado = nuevoSoldado;
-                    } else {
-                        ultimoSoldado->siguiente = nuevoSoldado;
-                        ultimoSoldado = nuevoSoldado;
-                    }
-                }
-                nuevoSoldado = new Soldado();
-            } else if (nuevoSoldado != nullptr) {
-                size_t pos = linea.find(":");
-                if (pos != string::npos) {
-                    string key = linea.substr(0, pos);
-                    string value = linea.substr(pos + 1);
-                    if (key == "Nombre") nuevoSoldado->nombre = value;
-                    else if (key == "Raza") nuevoSoldado->raza = devolverRaza();
-                    else if (key == "Ambiente") nuevoSoldado->ambiente = value;
-                    else if (key == "Accesorio") {
-                        Accesorio* acc = buscarAccesorio(value);
-                        if (acc != nullptr) {
-                            for (int i = 0; i < 5; i++) {
-                                if (nuevoSoldado->mochila[i] == nullptr) {
-                                    nuevoSoldado->mochila[i] = acc;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
+                cout << endl;
+            } else {
+                cout << linea << endl;
             }
         }
         archivo.close();
     } else {
-        cout << "No se pudo abrir el archivo de soldados" << endl;
+        cout << "No se pudo abrir el archivo de razas" << endl;
     }
 }
 
-void guardarEnArchivoSoldados() {
-    ofstream archivo("soldados.inv", ios::out);
-    if (archivo.is_open()) {
-        Soldado* actualSoldado = primeroSoldado;
-        while (actualSoldado != nullptr) {
-            archivo << "Nombre:" << actualSoldado->nombre << endl;
-            archivo << "Raza:" << actualSoldado->raza->nombre << endl;
-            archivo << "Ambiente:" << actualSoldado->raza->ambiente << endl;
-            for (int i = 0; i < 5; i++) {
-                if (actualSoldado->mochila[i] != nullptr) {
-                    archivo << "Accesorio:" << actualSoldado->mochila[i]->nombre << endl;
-                }
-            }
-            archivo << "--" << endl;
-            actualSoldado = actualSoldado->siguiente;
-        }
-        archivo.close();
-    } else {
-        cout << "No se pudo abrir el archivo de soldados" << endl;
-    }
-}
-
-void crearSoldado() {
-    Soldado *nuevo = new Soldado();
+void crearSoldado(Equipo* equipo, int numEquipo) {
+    Soldado* nuevo = new Soldado();
     cout << "Ingrese el nombre del soldado: ";
-    getline(cin, nuevo -> nombre);
     cin.ignore();
+    getline(cin, nuevo->nombre);
+
     cout << "Razas disponibles: " << endl;
-    leerRaza();
+    mostrarRazas();
     Raza* race = devolverRaza();
-    while (race == nullptr){
+    while (race == nullptr) {
         cout << "Ingrese una raza válida: ";
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         race = devolverRaza();
     }
-    nuevo -> raza = race;
+    nuevo->raza = race;
     if (nuevo->raza == nullptr) {
-        cout << "La raza no esta inicializada." << endl;
+        cout << "La raza no está inicializada." << endl;
     } else if (nuevo->raza->ambiente.empty()) {
-        cout << "Ambiente string esta vacia." << endl;
+        cout << "Ambiente string está vacía." << endl;
     } else {
-        cout << "Ambiente del soldado por consecuencia a su raza: "<< nuevo->raza->ambiente << endl;
-        nuevo -> ambiente = nuevo -> raza -> ambiente;
+        cout << "Ambiente del soldado por consecuencia a su raza: " << nuevo->raza->ambiente << endl;
+        nuevo->ambiente = nuevo->raza->ambiente;
+        nuevo->salud = nuevo->raza->salud;
+        nuevo->energia = nuevo->raza->energia;
     }
-    if (verificarAccesorios()){
+    if (verificarAccesorios()) {
         cargarAccesorios();
         for (int i = 0; i < 5; i++) {
             string accesorioName;
@@ -754,16 +764,15 @@ void crearSoldado() {
             getline(cin, accesorioName);
             Accesorio* acc = buscarAccesorio(accesorioName);
             if (acc != nullptr) {
-                nuevo -> mochila[i] = acc;
+                nuevo->mochila[i] = acc;
             } else {
                 cout << "Accesorio no encontrado." << endl;
                 i--;
             }
         }
-    }
-    else {
-        cout << "El soldado necesita minimo 5 accesorios";
-        while(cantidadAccesorios() < 5){
+    } else {
+        cout << "El soldado necesita mínimo 5 accesorios";
+        while (cantidadAccesorios() < 5) {
             crearAccesorio();
         }
         cargarAccesorios();
@@ -773,23 +782,15 @@ void crearSoldado() {
             getline(cin, accesorioName);
             Accesorio* acc = buscarAccesorio(accesorioName);
             if (acc != nullptr) {
-                nuevo -> mochila[i] = acc;
+                nuevo->mochila[i] = acc;
             } else {
                 cout << "Accesorio no encontrado." << endl;
                 i--;
             }
         }
     }
-    if (primeroSoldado == nullptr) {
-        primeroSoldado = nuevo;
-        ultimoSoldado = nuevo;
-        nuevo->siguiente = nullptr;
-    } else {
-        ultimoSoldado->siguiente = nuevo;
-        nuevo->siguiente = nullptr;
-        ultimoSoldado = nuevo;
-    }
-    guardarEnArchivoSoldados();
+    nuevo->equipo = numEquipo;
+    equipo->soldados[numEquipo] = nuevo;
     cout << "Soldado creado" << endl;
 }
 
@@ -797,102 +798,92 @@ void leerSoldado() {
     Soldado* actual = primeroSoldado;
     if (primeroSoldado != nullptr) {
         while (actual != nullptr) {
-            cout << endl << "Nombre: " << actual -> nombre << endl;
-            cout << "Raza: " << actual -> raza << endl;
-            cout << "Ambiente: " << actual -> ambiente << endl;
+            cout << endl << "Nombre: " << actual->nombre << endl;
+            cout << "Raza: " << actual->raza->nombre << endl;
+            cout << "Ambiente: " << actual->ambiente << endl;
             cout << "Accesorios: ";
             for (int i = 0; i < 5; i++) {
                 if (actual->mochila[i] != nullptr) {
                     cout << actual->mochila[i]->nombre << endl;
                 } else {
-                    cout << "Accesorio at index " << i << " is null." << endl;
+                    cout << "Accesorio en índice " << i << " es nulo." << endl;
                 }
             }
             cout << endl;
-            actual = actual -> siguiente;
+            actual = actual->siguiente;
         }
     } else {
         cout << "La lista de soldados se encuentra vacía" << endl;
     }
 }
 
-void modificarSoldado() {
-    Soldado* actual = primeroSoldado;
-    bool encontrado = false;
-    string soldadoBuscada;
-    cout << "Ingrese el nombre del soldado a modificar: ";
-    soldadoBuscada = validarString();
-    if (primeroSoldado != nullptr) {
-        while (actual != nullptr && encontrado != true) {
-            if (actual -> nombre == soldadoBuscada) {
-                cout << "Soldado con el nombre " << soldadoBuscada << " encontrada" << endl;
-                cout << "Ingrese el nuevo nombre: ";
-                actual -> nombre = validarString();
-                cout << "Razas disponibles: " << endl;
-                leerRaza();
-                Raza* race = devolverRaza();
-                while (race == nullptr){
-                    cout << "Ingrese una raza válida: ";
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    race = devolverRaza();
-                }
-                actual -> raza = race;
-                if (actual->raza == nullptr) {
-                    cout << "La raza no esta inicializada." << endl;
-                } else if (actual->raza->ambiente.empty()) {
-                    cout << "Ambiente string esta vacia." << endl;
-                } else {
-                    cout << "Ambiente del soldado por consecuencia a su raza: "<< actual->raza->ambiente << endl;
-                    actual -> ambiente = actual -> raza -> ambiente;
-                }
-                actual -> ambiente = validarNumero("Ingrese la nueva energía: ");
-                cout << "Ingrese el nuevo ambiente: ";
-                actual -> ambiente = validarString();
-                verificarAmbiente(actual -> ambiente);
-                cout << "Raza modificada" << endl;
-                encontrado = true;
-            }
-            actual = actual -> siguiente;
-        }
-        if (!encontrado) {
-            cout << "Soldado no encontrado" << endl;
-        }
-    } else {
-        cout << "La lista de soldados se encuentra vacía" << endl;
+void asignarSoldadosEquipos(Equipo* equipo1, Equipo* equipo2) {
+    for (int i = 0; i < 3; i++) {
+        crearSoldado(equipo1, 0);
+    }
+    for (int i = 0; i < 3; i++) {
+        crearSoldado(equipo2, 1);
     }
 }
 
-void eliminarSoldado() {
-    Soldado* actual = primeroSoldado;
-    Soldado* anterior = nullptr;
-    bool encontrado = false;
-    string soldadoBuscada;
-    cout << "Ingrese el nombre del soldado a eliminar: ";
-    soldadoBuscada = validarString();
-    if (primeroSoldado != nullptr) {
-        while (actual != nullptr && encontrado != true) {
-            if (actual -> nombre == soldadoBuscada) {
-                cout << "Soldado con el nombre " << soldadoBuscada << " encontrada" << endl;
-                if (actual == primeroSoldado) {
-                    primeroSoldado = primeroSoldado -> siguiente;
-                } else if (actual == ultimoSoldado) {
-                    anterior -> siguiente = nullptr;
-                    ultimoSoldado = anterior;
-                } else {
-                    anterior -> siguiente = actual -> siguiente;
-                }
-                cout << "Soldado eliminada" << endl;
-                encontrado = true;
-                delete actual;
-            }
-            anterior = actual;
-            actual = actual -> siguiente;
+string seleccionarAmbiente() {
+    Ambiente* actual = primeroAmbiente;
+    int s = 0;
+    while (actual != nullptr) {
+        s++;
+        actual = actual->siguiente;
+    }
+    int sel = rand() % s;
+    actual = primeroAmbiente;
+    for (int i = 0; i < sel; i++) {
+        actual = actual->siguiente;
+    }
+    return actual->nombre;
+}
+
+int seleccionarEquipoEmpieza() {
+    return rand() % 2;
+}
+
+void empiezaRonda(Soldado* atacante, Soldado* defensor) {
+    for (int i = 0; i < 2; i++) {
+        if (atacante->mochila[i] != nullptr) {
+            defensor->salud -= atacante->mochila[i]->valor;
         }
-        if (!encontrado) {
-            cout << "Soldado no encontrado" << endl;
+    }
+    if (defensor->salud <= 0) {
+        atacante->energia += defensor->energia;
+        cout << "El soldado " << atacante->nombre << " ha ganado la batalla y absorbe la energía del derrotado." << endl;
+    }
+}
+
+void gestionarBatalla(Soldado* soldado1, Soldado* soldado2, string ambiente) {
+    int turno = 0;
+    while (soldado1->salud > 0 && soldado2->salud > 0 && soldado1->energia > 0 && soldado2->energia > 0) {
+        if (turno % 2 == 0) {
+            empiezaRonda(soldado1, soldado2);
+        } else {
+            empiezaRonda(soldado2, soldado1);
         }
+        turno++;
+    }
+    if (soldado1->salud > 0 && soldado1->energia > 0) {
+        cout << "El soldado " << soldado1->nombre << " ha ganado la batalla." << endl;
     } else {
-        cout << "La lista de soldados se encuentra vacía" << endl;
+        cout << "El soldado " << soldado2->nombre << " ha ganado la batalla." << endl;
+    }
+}
+
+void gestionarGuerra(Equipo* equipo1, Equipo* equipo2) {
+    string ambiente = seleccionarAmbiente();
+    cout << "El ambiente de la batalla es " << ambiente << endl;
+    int equipoEmpieza = seleccionarEquipoEmpieza();
+    cout << "El equipo que empieza es el " << equipoEmpieza + 1 << endl;
+    for (int i = 0; i < 3; i++) {
+        if (equipoEmpieza == 0) {
+            gestionarBatalla(equipo1->soldados[i], equipo2->soldados[i], ambiente);
+        } else {
+            gestionarBatalla(equipo2->soldados[i], equipo1->soldados[i], ambiente);
+        }
     }
 }
