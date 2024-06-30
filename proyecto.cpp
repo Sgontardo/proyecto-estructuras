@@ -165,9 +165,9 @@ void menu() {
 
 int main() {
 
-    leerArchivoRazas();
-    leerArchivoAccesorios();
-    leerArchivoAmbientes();
+    leerArchivoRazas(primeroRaza, ultimoRaza);
+    leerArchivoAccesorios(primeroAccesorio, ultimoAccesorio);
+    leerArchivoAmbientes(primeroAmbiente, ultimoAmbiente);
 
     menu();
     return 0;
