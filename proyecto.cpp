@@ -11,6 +11,9 @@ Integrantes:
 
 using namespace std;
 
+Equipo equipo1, equipo2;
+string ambienteBatalla = seleccionarAmbiente();
+
 
 void menu() {
     int opcion;
@@ -135,10 +138,12 @@ void menu() {
                             }
                             cout << endl;
                             cout << "Ahora si! Cree su soldado" << endl;
-                            // crearSoldado();
+                            asignarSoldadosEquipos(&equipo1, &equipo2);
+                            gestionarGuerra(&equipo1, &equipo2);
                         }
                         else{
-                            // crearSoldado();
+                            asignarSoldadosEquipos(&equipo1, &equipo2);
+                            gestionarGuerra(&equipo1, &equipo2);
                         }
                         break;
 

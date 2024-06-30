@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdlib>
 #include <limits>
+#include <stdexcept>
 
 
 using namespace std;
@@ -832,9 +833,12 @@ void asignarSoldadosEquipos(Equipo* equipo1, Equipo* equipo2) {
 string seleccionarAmbiente() {
     Ambiente* actual = primeroAmbiente;
     int s = 0;
-    while (actual != nullptr) {
+    while (actual!= nullptr) {
         s++;
         actual = actual->siguiente;
+    }
+    if (s == 0) {
+        throw std::runtime_error("No hay ambientes disponibles.");
     }
     int sel = rand() % s;
     actual = primeroAmbiente;
@@ -844,6 +848,7 @@ string seleccionarAmbiente() {
     return actual->nombre;
 }
 
+
 int seleccionarEquipoEmpieza() {
     return rand() % 2;
 }
@@ -852,8 +857,22 @@ int calcularEfecto(Soldado& soldado, string ambienteBatalla) {
     int efecto = 0;
     for (int i = 0; i < 5; i++) {
         if (soldado.mochila[i] != nullptr) {
-            if (soldado.mochila[i]->recuperacion == ambienteBatalla) {
+            if (soldado.mochila[i]->tipo == "Ataque") {
                 efecto += soldado.mochila[i]->valor;
+            } else if (soldado.mochila[i]->tipo == "Defensa") {
+                if (soldado.mochila[i]->contenedor > 0) {
+                    int valorDefensa = soldado.mochila[i]->contenedor - efecto;
+                    if (valorDefensa > 0) {
+                        soldado.mochila[i]->contenedor -= efecto;
+                        efecto = 0;
+                    } else {
+                        efecto -= soldado.mochila[i]->contenedor;
+                        soldado.mochila[i]->contenedor = 0;
+                    }
+                }
+            } else if (soldado.mochila[i]->tipo == "Supervivencia" && soldado.mochila[i]->recuperacion == ambienteBatalla) {
+                soldado.energia += soldado.mochila[i]->energia;
+                soldado.salud += soldado.mochila[i]->energia;
             }
         }
     }
