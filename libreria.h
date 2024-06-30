@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdlib>
 #include <limits>
+#include <stdexcept>
 
 
 using namespace std;
@@ -90,8 +91,6 @@ void leerAmbiente() {
     }
 }
 
-// Crear una funcion que solo lea el nombre del ambiente del archivo ambiente.inv
-
 void mostrarAmbientes() {
     ifstream archivo("ambiente.inv");
     if (archivo.is_open()) {
@@ -143,7 +142,7 @@ void verificarAmbiente(string ambiente) {
 }
 
 
-void leerArchivoRazas() {
+void leerArchivoRazas(Raza*& primeroRaza, Raza*& ultimoRaza) {
     ifstream archivo("razas.inv");
     if (archivo.is_open()) {
         int cantidadRazas;
@@ -164,28 +163,30 @@ void leerArchivoRazas() {
                     }
                 }
                 nuevaRaza = new Raza();
-            } else if (nuevaRaza != nullptr) {
+            } else if (nuevaRaza!= nullptr) {
                 size_t pos = linea.find(":");
-                if (pos != string::npos) {
+                if (pos!= string::npos) {
                     string key = linea.substr(0, pos);
                     string value = linea.substr(pos + 1);
                     if (key == "Energia") nuevaRaza->energia = stoi(value);
                     else if (key == "Salud") nuevaRaza->salud = stoi(value);
                     else if (key == "Ambiente") nuevaRaza->ambiente = value;
                     else nuevaRaza->nombre = key;
+                } else {
+                    nuevaRaza->nombre = linea;
                 }
+            } else {
+                nuevaRaza = new Raza{linea, 0, 0, "", nullptr};
             }
         }
         archivo.close();
     } else {
         cout << "No se pudo abrir el archivo de razas" << endl;
     }
-
-
 }
 
 void guardarEnArchivoRazas() {
-    ofstream archivo("razas.inv", ios::out);
+    ofstream archivo("razas.inv", ios::out | ios::trunc);
     if (archivo.is_open()) {
         int cantidadRazas = 0;
         Raza* tempRaza = primeroRaza;
@@ -201,7 +202,6 @@ void guardarEnArchivoRazas() {
             archivo << "Energia:" << actualRaza->energia << endl;
             archivo << "Salud:" << actualRaza->salud << endl;
             archivo << "Ambiente:" << actualRaza->ambiente << endl;
-            archivo << "--" << endl;
             actualRaza = actualRaza->siguiente;
         }
         archivo.close();
@@ -334,7 +334,7 @@ bool RazaVacio(){
     }
 }
 
-void leerArchivoAccesorios() {
+void leerArchivoAccesorios(Accesorio*& primeroAccesorio, Accesorio*& ultimoAccesorio) {
     ifstream archivo("accesorios.inv");
     if (archivo.is_open()) {
         int cantidadAccesorios;
@@ -366,7 +366,11 @@ void leerArchivoAccesorios() {
                     else if (key == "Energia") nuevoAccesorio->energia = stoi(value);
                     else if (key == "Contenedor") nuevoAccesorio->contenedor = stoi(value);
                     else nuevoAccesorio->nombre = key;
+                } else {
+                    nuevoAccesorio->nombre = linea;
                 }
+            } else {
+                nuevoAccesorio = new Accesorio{linea, "", 0, "", 0, 0, nullptr};
             }
         }
         archivo.close();
@@ -376,7 +380,7 @@ void leerArchivoAccesorios() {
 }
 
 void guardarEnArchivoAccesorios() {
-    ofstream archivo("accesorios.inv", ios::out);
+    ofstream archivo("accesorios.inv", ios::out | ios::trunc);
     if (archivo.is_open()) {
         int cantidadAccesorios = 0;
         Accesorio* tempAccesorio = primeroAccesorio;
@@ -394,7 +398,6 @@ void guardarEnArchivoAccesorios() {
             archivo << "Recuperacion:" << actualAccesorio->recuperacion << endl;
             archivo << "Energia:" << actualAccesorio->energia << endl;
             archivo << "Contenedor:" << actualAccesorio->contenedor << endl;
-            archivo << "--" << endl;
             actualAccesorio = actualAccesorio->siguiente;
         }
         archivo.close();
@@ -509,8 +512,8 @@ void eliminarAccesorio() {
 }
 
 
-void leerArchivoAmbientes() {
-    ifstream archivo("ambientes.inv");
+void leerArchivoAmbientes(Ambiente*& primeroAmbiente, Ambiente*& ultimoAmbiente) {
+    ifstream archivo("ambiente.inv");
     if (archivo.is_open()) {
         int cantidadAmbientes;
         string linea;
@@ -532,6 +535,8 @@ void leerArchivoAmbientes() {
                 nuevoAmbiente = new Ambiente();
             } else if (nuevoAmbiente != nullptr) {
                 nuevoAmbiente->nombre = linea;
+            } else {
+                nuevoAmbiente = new Ambiente{linea, nullptr};
             }
         }
         archivo.close();
@@ -541,7 +546,7 @@ void leerArchivoAmbientes() {
 }
 
 void guardarEnArchivoAmbiente() {
-    ofstream archivo("ambientes.inv", ios::out);
+    ofstream archivo("ambiente.inv", ios::out | ios::trunc);
     if (archivo.is_open()) {
         int cantidadAmbientes = 0;
         Ambiente* tempAmbiente = primeroAmbiente;
@@ -554,7 +559,6 @@ void guardarEnArchivoAmbiente() {
         Ambiente* actualAmbiente = primeroAmbiente;
         while (actualAmbiente != nullptr) {
             archivo << actualAmbiente->nombre << endl;
-            archivo << "--" << endl;
             actualAmbiente = actualAmbiente->siguiente;
         }
         archivo.close();
@@ -829,9 +833,12 @@ void asignarSoldadosEquipos(Equipo* equipo1, Equipo* equipo2) {
 string seleccionarAmbiente() {
     Ambiente* actual = primeroAmbiente;
     int s = 0;
-    while (actual != nullptr) {
+    while (actual!= nullptr) {
         s++;
         actual = actual->siguiente;
+    }
+    if (s == 0) {
+        throw std::runtime_error("No hay ambientes disponibles.");
     }
     int sel = rand() % s;
     actual = primeroAmbiente;
@@ -841,14 +848,48 @@ string seleccionarAmbiente() {
     return actual->nombre;
 }
 
+
 int seleccionarEquipoEmpieza() {
     return rand() % 2;
 }
 
-void empiezaRonda(Soldado* atacante, Soldado* defensor) {
+int calcularEfecto(Soldado& soldado, string ambienteBatalla) {
+    int efecto = 0;
+    for (int i = 0; i < 5; i++) {
+        if (soldado.mochila[i] != nullptr) {
+            if (soldado.mochila[i]->tipo == "Ataque") {
+                efecto += soldado.mochila[i]->valor;
+            } else if (soldado.mochila[i]->tipo == "Defensa") {
+                if (soldado.mochila[i]->contenedor > 0) {
+                    int valorDefensa = soldado.mochila[i]->contenedor - efecto;
+                    if (valorDefensa > 0) {
+                        soldado.mochila[i]->contenedor -= efecto;
+                        efecto = 0;
+                    } else {
+                        efecto -= soldado.mochila[i]->contenedor;
+                        soldado.mochila[i]->contenedor = 0;
+                    }
+                }
+            } else if (soldado.mochila[i]->tipo == "Supervivencia" && soldado.mochila[i]->recuperacion == ambienteBatalla) {
+                soldado.energia += soldado.mochila[i]->energia;
+                soldado.salud += soldado.mochila[i]->energia;
+            }
+        }
+    }
+    return efecto;
+}
+
+void empiezaRonda(Soldado* atacante, Soldado* defensor, string ambienteBatalla) {
     for (int i = 0; i < 2; i++) {
         if (atacante->mochila[i] != nullptr) {
-            defensor->salud -= atacante->mochila[i]->valor;
+            int efecto = calcularEfecto(*atacante, ambienteBatalla);
+            if (efecto < 0) {
+                defensor->salud += efecto;
+                cout << "El soldado " << atacante->nombre << " ha atacado al soldado " << defensor->nombre << " y le ha quitado " << efecto << " de salud." << endl;
+            } else {
+                atacante->energia += efecto;
+                cout << "El soldado " << atacante->nombre << " ha recuperado " << efecto << " de energía." << endl;
+        }
         }
     }
     if (defensor->salud <= 0) {
@@ -857,13 +898,13 @@ void empiezaRonda(Soldado* atacante, Soldado* defensor) {
     }
 }
 
-void gestionarBatalla(Soldado* soldado1, Soldado* soldado2, string ambiente) {
+void gestionarBatalla(Soldado* soldado1, Soldado* soldado2, string ambienteBatalla) {
     int turno = 0;
     while (soldado1->salud > 0 && soldado2->salud > 0 && soldado1->energia > 0 && soldado2->energia > 0) {
         if (turno % 2 == 0) {
-            empiezaRonda(soldado1, soldado2);
+            empiezaRonda(soldado1, soldado2, ambienteBatalla);
         } else {
-            empiezaRonda(soldado2, soldado1);
+            empiezaRonda(soldado2, soldado1, ambienteBatalla);
         }
         turno++;
     }

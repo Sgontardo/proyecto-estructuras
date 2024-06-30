@@ -43,7 +43,7 @@ Energia:5
 Contenedor:0
 --
 Botas Gravitatorias
-Tipo:Acondicionamiento
+Tipo:Condicionamiento
 Valor:0
 Recuperación:Atlante
 Energia:0
@@ -57,7 +57,7 @@ Energia:40
 Contenedor:0
 --
 Dispositivo de Terretransformador
-Tipo:Acondicionamiento
+Tipo:Condicionamiento
 Valor:0
 Recuperación:Tierra
 Energia:0
@@ -160,6 +160,4 @@ Valor:40
 Recuperación:
 Energia:20
 Contenedor:0
-
-
-
+--
