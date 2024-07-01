@@ -12,7 +12,6 @@ Integrantes:
 using namespace std;
 
 Equipo equipo1, equipo2;
-string ambienteBatalla = seleccionarAmbiente();
 
 
 void menu() {

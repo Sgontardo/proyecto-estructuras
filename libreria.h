@@ -756,7 +756,7 @@ void crearSoldado(Equipo* equipo, int numEquipo) {
     } else if (nuevo->raza->ambiente.empty()) {
         cout << "Ambiente string está vacía." << endl;
     } else {
-        cout << "Ambiente del soldado por consecuencia a su raza: " << nuevo->raza->ambiente << endl;
+        cout << "El ambiente del soldado por su raza es: " << nuevo->raza->ambiente << endl;
         nuevo->ambiente = nuevo->raza->ambiente;
         nuevo->salud = nuevo->raza->salud;
         nuevo->energia = nuevo->raza->energia;
@@ -831,25 +831,6 @@ void asignarSoldadosEquipos(Equipo* equipo1, Equipo* equipo2) {
     }
 }
 
-string seleccionarAmbiente() {
-    srand(static_cast<unsigned>(time(nullptr)));
-    Ambiente* actual = primeroAmbiente;
-    int s = 0;
-    while (actual!= nullptr) {
-        s++;
-        actual = actual->siguiente;
-    }
-    if (s == 0) {
-        throw std::runtime_error("No hay ambientes disponibles.");
-    }
-    int sel = rand() % s;
-    actual = primeroAmbiente;
-    for (int i = 0; i < sel; i++) {
-        actual = actual->siguiente;
-    }
-    return actual->nombre;
-}
-
 int seleccionarEquipoEmpieza() {
     return rand() % 2;
 }
@@ -916,8 +897,21 @@ void gestionarBatalla(Soldado* soldado1, Soldado* soldado2, string ambienteBatal
     }
 }
 
+
 void gestionarGuerra(Equipo* equipo1, Equipo* equipo2) {
-    string ambiente = seleccionarAmbiente();
+    Ambiente* actual = primeroAmbiente;
+    int cantidadAmbientes = 0;
+    while (actual != nullptr) {
+        cantidadAmbientes++;
+        actual = actual->siguiente;
+    }
+    int seleccion = rand() % cantidadAmbientes;
+    actual = primeroAmbiente;
+    for (int i = 0; i < seleccion; i++) {
+        actual = actual->siguiente;
+    }
+    string ambiente = actual->nombre;
+
     cout << "El ambiente de la batalla es " << ambiente << endl;
     int equipoEmpieza = seleccionarEquipoEmpieza();
     cout << "El equipo que empieza es el " << equipoEmpieza + 1 << endl;
