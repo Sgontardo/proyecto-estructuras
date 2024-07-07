@@ -187,10 +187,10 @@ void menu() {
 }
 
 int main() {
-
+    leerArchivoAmbientes(primeroAmbiente, ultimoAmbiente);
     leerArchivoRazas(primeroRaza, ultimoRaza);
     leerArchivoAccesorios(primeroAccesorio, ultimoAccesorio);
-    leerArchivoAmbientes(primeroAmbiente, ultimoAmbiente);
+
 
     menu();
     return 0;

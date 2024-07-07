@@ -9,13 +9,7 @@
 
 using namespace std;
 
-struct Raza {
-    string nombre;
-    int energia;
-    int salud;
-    string ambiente;
-    Raza* siguiente;
-} *primeroRaza = nullptr, *ultimoRaza = nullptr;
+
 
 struct Accesorio {
     string nombre;
@@ -31,6 +25,14 @@ struct Ambiente {
     string nombre;
     Ambiente* siguiente;
 } *primeroAmbiente = nullptr, *ultimoAmbiente = nullptr;
+
+struct Raza {
+    string nombre;
+    int energia;
+    int salud;
+    Ambiente* ambiente;
+    Raza* siguiente;
+} *primeroRaza = nullptr, *ultimoRaza = nullptr;
 
 struct Soldado {
     string nombre;
@@ -140,7 +142,27 @@ void verificarAmbiente(string ambiente) {
         cout << "La lista de ambientes se encuentra vacía" << endl;
     }
 }
-
+Ambiente* buscarOCrearAmbiente(const string& nombre) {
+    Ambiente* actual = primeroAmbiente;
+    while (actual != nullptr) {
+        if (actual->nombre == nombre) {
+            return actual; // Found existing Ambiente
+        }
+        actual = actual->siguiente;
+    }
+    // Not found, create a new Ambiente
+    Ambiente* nuevo = new Ambiente();
+    nuevo->nombre = nombre;
+    nuevo->siguiente = nullptr;
+    // Link into the list
+    if (ultimoAmbiente != nullptr) {
+        ultimoAmbiente->siguiente = nuevo;
+    } else {
+        primeroAmbiente = nuevo; // First element in the list
+    }
+    ultimoAmbiente = nuevo;
+    return nuevo;
+}
 
 void leerArchivoRazas(Raza*& primeroRaza, Raza*& ultimoRaza) {
     ifstream archivo("razas.inv");
@@ -170,13 +192,15 @@ void leerArchivoRazas(Raza*& primeroRaza, Raza*& ultimoRaza) {
                     string value = linea.substr(pos + 1);
                     if (key == "Energia") nuevaRaza->energia = stoi(value);
                     else if (key == "Salud") nuevaRaza->salud = stoi(value);
-                    else if (key == "Ambiente") nuevaRaza->ambiente = value;
+                    else if (key == "Ambiente") {
+                        nuevaRaza->ambiente = buscarOCrearAmbiente(value);
+                    }
                     else nuevaRaza->nombre = key;
                 } else {
                     nuevaRaza->nombre = linea;
                 }
             } else {
-                nuevaRaza = new Raza{linea, 0, 0, "", nullptr};
+                nuevaRaza = new Raza{linea, 0, 0, nullptr, nullptr};
             }
         }
         archivo.close();
@@ -209,7 +233,19 @@ void guardarEnArchivoRazas() {
         cout << "No se pudo abrir el archivo de razas" << endl;
     }
 }
-
+Ambiente* devolverAmbiente() {
+    string ambiente;
+    cout << "Ingrese el nombre del ambiente: ";
+    getline(cin, ambiente);
+    Ambiente* actual = primeroAmbiente;
+    while (actual != nullptr) {
+        if (actual->nombre == ambiente) {
+            return actual;
+        }
+        actual = actual->siguiente;
+    }
+    return nullptr;
+}
 void crearRaza() {
     Raza* nuevo = new Raza();
     cout << "Ingrese el nombre de la raza: ";
@@ -218,8 +254,8 @@ void crearRaza() {
     nuevo->salud = 100;
     cout << "Ingrese el ambiente de la raza de la lista de ambientes disponibles: ";
     mostrarAmbientes();
-    nuevo->ambiente = validarString();
-    verificarAmbiente(nuevo->ambiente);
+    nuevo->ambiente = devolverAmbiente();
+
 
     if (primeroRaza == nullptr) {
         primeroRaza = nuevo;
@@ -241,7 +277,7 @@ void leerRaza() {
             cout << endl << "Nombre: " << actual->nombre << endl;
             cout << "Energia: " << actual->energia << endl;
             cout << "Salud: " << actual->salud << endl;
-            cout << "Ambiente: " <<actual->ambiente << endl;
+            cout << "Ambiente: " <<actual->ambiente->nombre << endl;
             actual = actual->siguiente;
         }
     } else {
@@ -263,8 +299,8 @@ void modificarRaza() {
                 actual->nombre = validarString();
                 actual->energia = validarNumero("Ingrese la nueva energía: ");
                 cout << "Ingrese el nuevo ambiente: ";
-                actual->ambiente = validarString();
-                verificarAmbiente(actual->ambiente);
+                mostrarAmbientes();
+                actual->ambiente = devolverAmbiente();
                 cout << "Raza modificada" << endl;
                 encontrado = true;
             }
@@ -753,11 +789,11 @@ void crearSoldado() {
     nuevo->raza = race;
     if (nuevo->raza == nullptr) {
         cout << "La raza no está inicializada." << endl;
-    } else if (nuevo->raza->ambiente.empty()) {
+    } else if (nuevo->raza->ambiente->nombre.empty()) {
         cout << "Ambiente string está vacía." << endl;
     } else {
-        cout << "El ambiente del soldado por su raza es: " << nuevo->raza->ambiente << endl;
-        nuevo->ambiente = nuevo->raza->ambiente;
+        cout << "El ambiente del soldado por su raza es: " << nuevo->raza->ambiente->nombre << endl;
+        nuevo->ambiente = nuevo->raza->ambiente->nombre;
         nuevo->salud = nuevo->raza->salud;
         nuevo->energia = nuevo->raza->energia;
     }
