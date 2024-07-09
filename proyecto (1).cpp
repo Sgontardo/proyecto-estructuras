@@ -168,7 +168,25 @@ void menu() {
                             }
                             crearEquipo(equipo1,equipo2);
                         } else {
-                            gestionarGuerra(equipo1,equipo2);
+                            cout<< "Elige el jugador del equipo 1: "<<endl;
+                            Soldado* p1 = elegirJugador(equipo1);
+                            cout<< "Elige el jugador del equipo 2: "<<endl;
+                            Soldado* p2 = elegirJugador(equipo2);
+                            string j1 = p1->nombre;
+                            string j2 = p2->nombre;
+                            int num = rand() % 6 + 1;
+                            Ambiente* lugar = lugarPelea(primeroAmbiente,num);
+                            int turnoi = 0;
+                            while (equipomuerto(equipo1) == false|| equipomuerto(equipo2) == false){
+                                while (p1->salud > 0 && p2->salud > 0){
+                                    Batalla(p1,j1,p1,p2,j2,p2,turnoi,lugar,primeroRaza,equipo1,equipo2);
+                                }
+                                turnoi++;
+                                cout << "Elige el nuevo jugador del equipo 1: "<<endl;
+                                p1 = elegirJugador(equipo1);
+                                cout << "Elige el nuevo jugador del equipo 2: "<<endl;
+                                p2 = elegirJugador(equipo2);
+                            }
                         }
                     } else {
                         cout << "Ingrese una opción válida" << endl;
