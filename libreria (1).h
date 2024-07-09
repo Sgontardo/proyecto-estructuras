@@ -1352,16 +1352,16 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
                 cout<<"Energia:"<<p2->energia<<endl;
                 cout<<""<<endl;
 
-                if (p1->energia <= 0 and p2->salud<=0){
+                if (p1->energia <= 0 && p2->salud<=0){
                     fin=3;
                 }
-                else if (p1->energia <= 0 and p2->energia<=0){
+                else if (p1->energia <= 0 && p2->energia<=0){
                     fin=3;
                 }
-                else if (p1->salud <= 0 and p2->salud<=0){
+                else if (p1->salud <= 0 && p2->salud<=0){
                     fin=3;
                 }
-                else if (p1->salud <= 0 and p2->energia<=0){
+                else if (p1->salud <= 0 && p2->energia<=0){
                     fin=3;
                 }
                 else if (p1->energia<=0){
@@ -1502,16 +1502,16 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
                 cout<<"Energia:"<<p2->energia<<endl;
                 cout<<""<<endl;
 
-                if (p1->energia <= 0 and p2->salud<=0){
+                if (p1->energia <= 0 && p2->salud<=0){
                     fin=3;
                 }
-                else if (p1->energia <= 0 and p2->energia<=0){
+                else if (p1->energia <= 0 && p2->energia<=0){
                     fin=3;
                 }
-                else if (p1->salud <= 0 and p2->salud<=0){
+                else if (p1->salud <= 0 && p2->salud<=0){
                     fin=3;
                 }
-                else if (p1->salud <= 0 and p2->energia<=0){
+                else if (p1->salud <= 0 && p2->energia<=0){
                     fin=3;
                 }
                 else if (p1->energia<=0){
