@@ -11,7 +11,7 @@ Integrantes:
 
 using namespace std;
 
-Equipo equipo1, equipo2;
+Soldado* equipo1[3]; Soldado* equipo2[3];
 
 
 void menu() {
@@ -21,7 +21,7 @@ void menu() {
         cout << "1. Acciones para razas" << endl;
         cout << "2. Acciones para accesorios" << endl;
         cout << "3. Acciones para ambientes" << endl;
-        cout << "4. Ir a la Guerra!!" << endl;
+        cout << "4. Acciones para soldados" << endl;
         cout << "5. Salir" << endl;
         opcion = validarNumero("Ingrese una opción: ");
         switch (opcion) {
@@ -116,6 +116,8 @@ void menu() {
                 do {
                     cout << "1. Crear soldados" << endl;
                     cout << "2. Leer soldados" << endl;
+                    cout << "3. Crear equipo" << endl;
+                    cout << "4. Ir a la guerra!!" << endl;
                     cout << "5. Volver" << endl;
                     opcionSoldado = validarNumero("Ingrese una opción: ");
                     if (opcionSoldado == 1) {
@@ -137,20 +139,55 @@ void menu() {
                             }
                             cout << endl;
                             cout << "Ahora si! Cree su soldado" << endl;
-                            asignarSoldadosEquipos(&equipo1, &equipo2);
-                            gestionarGuerra(&equipo1, &equipo2);
+                            crearSoldado();
                         }
                         else{
-                            asignarSoldadosEquipos(&equipo1, &equipo2);
-                            gestionarGuerra(&equipo1, &equipo2);
+                            crearSoldado();
                         }
                         break;
 
                     } else if (opcionSoldado == 2) {
                         leerSoldado();
-                    } else if (opcionSoldado == 5) {
-                        cout << "Volviendo" << endl;
-                        break;
+                    } else if (opcionSoldado == 3) {
+                        if (cantidadsoldados() < 7 ){
+                            cout << "No se pueden crear los equipos. Se necesitan 6 soldados" << endl;
+                            while (cantidadsoldados() < 6) {
+                                crearSoldado();
+                                cout << "Soldado "<< cantidadsoldados() << " creado" << endl;
+                            }
+                            crearEquipo(equipo1,equipo2);
+                        } else {
+                            crearEquipo(equipo1,equipo2);
+                        }
+                    } else if (opcionSoldado == 4) {
+                        if (equipo1[0] == nullptr || equipo2[0] == nullptr) {
+                            cout << "No se pueden ir a la guerra. Se necesitan 6 soldados" << endl;
+                            while (cantidadsoldados() < 6) {
+                                crearSoldado();
+                                cout << "Soldado "<< cantidadsoldados() << " creado" << endl;
+                            }
+                            crearEquipo(equipo1,equipo2);
+                        } else {
+                            cout<< "Elige el jugador del equipo 1: "<<endl;
+                            Soldado* p1 = elegirJugador(equipo1);
+                            cout<< "Elige el jugador del equipo 2: "<<endl;
+                            Soldado* p2 = elegirJugador(equipo2);
+                            string j1 = p1->nombre;
+                            string j2 = p2->nombre;
+                            int num = rand() % 6 + 1;
+                            Ambiente* lugar = lugarPelea(primeroAmbiente,num);
+                            int turnoi = 0;
+                            while (equipomuerto(equipo1) == false|| equipomuerto(equipo2) == false){
+                                while (p1->salud > 0 && p2->salud > 0){
+                                    Batalla(p1,j1,p1,p2,j2,p2,turnoi,lugar,primeroRaza,equipo1,equipo2);
+                                }
+                                turnoi++;
+                                cout << "Elige el nuevo jugador del equipo 1: "<<endl;
+                                p1 = elegirJugador(equipo1);
+                                cout << "Elige el nuevo jugador del equipo 2: "<<endl;
+                                p2 = elegirJugador(equipo2);
+                            }
+                        }
                     } else {
                         cout << "Ingrese una opción válida" << endl;
                     }
@@ -168,10 +205,10 @@ void menu() {
 }
 
 int main() {
-
+    leerArchivoAmbientes(primeroAmbiente, ultimoAmbiente);
     leerArchivoRazas(primeroRaza, ultimoRaza);
     leerArchivoAccesorios(primeroAccesorio, ultimoAccesorio);
-    leerArchivoAmbientes(primeroAmbiente, ultimoAmbiente);
+
 
     menu();
     return 0;
