@@ -206,6 +206,26 @@ void leerArchivoRazas(Raza*& primeroRaza, Raza*& ultimoRaza) {
     }
 }
 
+
+void intercambioacc(Soldado* j1, Soldado* j2){
+    Accesorio* mochilaaux1[5];
+    Accesorio* mochilaaux2[5];
+    for (int i = 0; i < 5; ++i ) {
+        mochilaaux2[i] = j2->mochila[i];
+    }
+    for (int i = 0; i < 5; ++i ) {
+        mochilaaux1[i] = j1->mochila[i];
+    }
+    for (int i = 0; i <5; ++i){
+        j1-> mochila[i] = mochilaaux2[i];
+    }
+    for (int i = 0; i <5; ++i){
+        j2-> mochila[i] = mochilaaux1[i];
+    }
+
+}
+
+
 void guardarEnArchivoRazas() {
     ofstream archivo("razas.inv", ios::out | ios::trunc);
     if (archivo.is_open()) {
@@ -231,6 +251,7 @@ void guardarEnArchivoRazas() {
     }
 }
 Ambiente* devolverAmbiente() {
+    leerAmbiente();
     string ambiente;
     cout << "Ingrese el nombre del ambiente: ";
     getline(cin, ambiente);
@@ -578,7 +599,61 @@ void leerArchivoAmbientes(Ambiente*& primeroAmbiente, Ambiente*& ultimoAmbiente)
         cout << "No se pudo abrir el archivo de ambientes" << endl;
     }
 }
-
+Accesorio* darAccesorio(int i){
+    Accesorio* actual = primeroAccesorio;
+    int j = 0;
+    while (actual != nullptr) {
+        if (j == i) {
+            return actual;
+        }
+        j++;
+        actual = actual->siguiente;
+    }
+    return nullptr;
+}
+int cantidadRazas(){
+    Raza* actual = primeroRaza;
+    int cantidad = 0;
+    while (actual != nullptr) {
+        cantidad++;
+        actual = actual->siguiente;
+    }
+    return cantidad;
+}
+Raza* devolverrazarandom(){
+    Raza* actual = primeroRaza;
+    int i = 0;
+    int random = rand() % cantidadRazas();
+    while (actual != nullptr) {
+        if (i == random) {
+            return actual;
+        }
+        i++;
+        actual = actual->siguiente;
+    }
+    return nullptr;
+}
+void crearso(string nombre, Raza* raza){
+    Soldado* nuevo = new Soldado();
+    nuevo->nombre = nombre;
+    nuevo->raza = raza;
+    nuevo->ambiente = raza->ambiente->nombre;
+    nuevo->salud = 100;
+    nuevo->energia = 100;
+    for (int i = 0; i < 5; i++) {
+        nuevo->mochila[i] = darAccesorio(i);
+    }
+    if (primeroSoldado == nullptr) {
+        primeroSoldado = nuevo;
+        primeroSoldado->siguiente = nullptr;
+        ultimoSoldado = nuevo;
+    } else {
+        ultimoSoldado->siguiente = nuevo;
+        nuevo->siguiente = nullptr;
+        ultimoSoldado = nuevo;
+    }
+    cout << "Soldado creado" << endl;
+}
 
 void guardarEnArchivoAmbiente() {
     ofstream archivo("ambiente.inv", ios::out | ios::trunc);
@@ -809,7 +884,8 @@ void crearSoldado() {
             }
         }
     } else {
-        cout << "El soldado necesita mínimo 5 accesorios";
+        leerAccesorio();
+        cout << "El soldado necesita mínimo 5 accesorios"<<endl;
         while (cantidadAccesorios() < 5) {
             crearAccesorio();
         }
@@ -895,22 +971,7 @@ int cantidadsoldados(){
     return cantidad;
 
 }
-/*
-void asignarSoldadosEquipos(Equipo* equipo1, Equipo* equipo2) {
-    for (int i = 0; i < 3; i++) {
-        crearSoldado(equipo1, 0, i);
-        cout << equipo1->soldados[i]->nombre;
-    }
-    for (int i = 0; i < 3; i++) {
-        crearSoldado(equipo2, 1, i);
-        cout << equipo2->soldados[i]->nombre;
-    }
-    for (int i = 0; i < 3; i++) {
-        cout << "Soldado " << i + 1 << " del equipo 1: " << equipo1->soldados[i]->nombre << endl;
-        cout << "Soldado " << i + 1 << " del equipo 2: " << equipo2->soldados[i]->nombre << endl;
-    }
-}
-*/
+
 int seleccionarEquipoEmpieza() {
     return rand() % 2;
 }
@@ -1078,23 +1139,38 @@ int ValidarUso(string opc, Soldado* p){
     }
     return n;
 }
-
+void eliminarSoldado(Soldado* &p){
+    Soldado* actual=primeroSoldado;
+    Soldado* anterior=NULL;
+    while (actual!=NULL){
+        if (actual==p){
+            if (anterior==NULL){
+                primeroSoldado=actual->siguiente;
+            }
+            else{
+                anterior->siguiente=actual->siguiente;
+            }
+            delete actual;
+            break;
+        }
+        anterior=actual;
+        actual=actual->siguiente;
+    }
+}
 void EliminarPerosnajesPorNombre(Soldado* equipo[3],Soldado* p2) {
     string nombre = p2->nombre;
     for (int i = 0; i < 3; i++) {
         if (equipo[i]->nombre == nombre) {
-            equipo[i] = nullptr;
+            eliminarSoldado(equipo[i]);
         }
     }
 }
 bool equipomuerto(Soldado* equipo[3]) {
     for (int j = 0; j < 3; j++) {
         if (equipo[j] != nullptr) {
-            // If any soldier is alive, the team is not completely dead.
             return false;
         }
     }
-    // If the loop completes without finding an alive soldier, the team is dead.
     return true;
 }
 void RecuperarVida(Soldado* &p, Raza* &r, Soldado* pa){
@@ -1122,6 +1198,7 @@ void RecuperarVida(Soldado* &p, Raza* &r, Soldado* pa){
         actualr=r;
     }
 }
+
 
 void RecuperarEnergia(Soldado* p, Raza* &r){
     Soldado* actual=p;
@@ -1163,7 +1240,7 @@ Soldado* elegirJugador(Soldado* equipo[3]){
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         } else {
-            break; // Valid input, exit the loop
+            break;
         }
     } while (true);
     j-=1;
@@ -1236,7 +1313,7 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
         if (turno%2==0){
             cout<<"TURNO "<<t<<": "<<j1<<endl;
             cout<<p1->nombre<<endl;
-            cout<<"웃"<<endl;
+            cout<<"personaje"<<endl;
             cout<<"Vida:"<<endl;
             cout<<p1->salud<<endl;
             cout<<"Energia:"<<endl;
@@ -1245,7 +1322,7 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
             cout<<""<<endl;
 
             cout<<p2->nombre<<endl;
-            cout<<"웃"<<endl;
+            cout<<"personaje"<<endl;
             cout<<"Vida:"<<endl;
             cout<<p2->salud<<endl;
             cout<<"Energia:"<<endl;
@@ -1253,34 +1330,34 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
 
 
             if (p1->mochila[0]->valor == 0 && p1->mochila[1]->valor == 0 && p1->mochila[2]->valor == 0){
-                cout<<"Parece que "<<p1->nombre<<" no tiene nada que usar para la batalla"<<endl;
-                cout<<"¡ "<<p2->nombre<<" aprovecho la confusion para matarlo por la espalda!"<<endl;
+                cout<<p1->nombre<<" no tiene nada que usar para la batalla"<<endl;
+                cout<<"¡ "<<p2->nombre<<" aprovecho para matarlo!"<<endl;
                 p1->salud=0;
             }
             else{
                 cout<<"¿Que vas a usar? "<<j1<<endl;
                 for (int i=0; i<3; i++){
-                    if (p1->mochila[i]->valor != 0){
-                        cout<<i+1<<". "<<p1->mochila[i]->nombre<<endl;
-                        cout<<p1->mochila[i]->tipo<<endl;
-                        cout<<"Valor: "<<p1->mochila[i]->valor<<endl;
-                        cout<<"Su uso resta "<<p1->mochila[i]->energia<<" de energia"<<endl;
+                    if (p1->mochila[i]->valor != 0)
+                    {
+                        cout << i + 1 << ". " << p1->mochila[i]->nombre << endl;
+                        cout << p1->mochila[i]->tipo << endl;
+                        cout << "Valor: " << p1->mochila[i]->valor << endl;
+                        cout << "Su uso resta " << p1->mochila[i]->energia << " de energia" << endl;
 
-                        if (p1->mochila[i]->tipo == "Defensa"){
-                            cout<<"Cubre "<<p1->mochila[i]->contenedor<<endl;
+                        if (p1->mochila[i]->tipo == "Defensa") {
+                            cout << "Protege " << p1->mochila[i]->contenedor << endl;
                         }
-                        if (p1->mochila[i]->tipo == "Supervivencia"){
-                            cout<<"Recupera la "<<p1->mochila[i]->recuperacion<<endl;
+                        if (p1->mochila[i]->tipo == "Supervivencia") {
+                            cout << "Recupera la " << p1->mochila[i]->recuperacion << endl;
                         }
                     }
                 }
                 getline(cin,opc);
                 opv=ValidarUso(opc,p1);
-
                 if (p1->mochila[opv]->tipo == "Ataque"){
                     daño= p1->mochila[opv]->valor - def2;
                     if (daño<1){
-                        cout<<"El ataque no le hizo ni cosquillas a" <<p2->nombre<<" !"<<endl;
+                        cout<<"El ataque no le hizo nada a" <<p2->nombre<<" !"<<endl;
                     }
                     else{
                         if (conte2==0){
@@ -1291,11 +1368,11 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
                             cout<<p2->nombre<<" perdio "<<daño<<" de vida"<<endl;
                             conte2= conte2 - daño;
                             if (conte2 >= 0){
-                                cout<<"¡Pero parece que el objeto de defensa de "<<p2->nombre<<" contubo todo el golpe!"<<endl;
+                                cout<<"¡Pero parece que el objeto de defensa de "<<p2->nombre<<" amortiguo todo el golpe!"<<endl;
                                 p2->mochila[aux_def]->contenedor=conte2;
                             }
                             else{
-                                cout<<"¡Pero parece que el objeto de defensa de "<<p2->nombre<<" contubo parte del golpe!"<<endl;
+                                cout<<"¡Pero parece que el objeto de defensa de "<<p2->nombre<<" amortiguo parte del golpe!"<<endl;
                                 p2->salud = p2->salud+conte2;
                                 p2->mochila[aux_def]->contenedor=0;
                             }
@@ -1312,7 +1389,7 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
                     aux_def=opv;
                     def1=p1->mochila[opv]->valor;
                     cout<<"El proximo ataque de tu rival hace "<<p1->mochila[opv]->valor<<" menos de daño"<<endl;
-                    cout<<"Optubiste una covertura de "<<p1->mochila[opv]->contenedor<<" de daños"<<endl;
+                    cout<<"Obtuviste una proteccion de "<<p1->mochila[opv]->contenedor<<" de daños"<<endl;
                     cout<<p1->nombre<<" perdio "<<p1->mochila[opv]->energia<<" energia"<<endl;
                     p1->energia=p1->energia - p1->mochila[opv]->energia;
 
@@ -1336,9 +1413,9 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
                 }
                 if (efecto1e!=0){
                     p1->energia=p1->energia-efecto1e;
-                    cout<<p1->nombre<<" perdio"<< efecto1e<< "de energia por no estar  con proteccion"<<endl;
+                    cout<<p1->nombre<<" perdio"<< efecto1e<< "de energia por no estar defendido"<<endl;
                     p1->salud=p1->salud-efecto1v;
-                    cout<<p1->nombre<<" perdio"<< efecto1e<< "de vida por no estar  con proteccion"<<endl;
+                    cout<<p1->nombre<<" perdio"<< efecto1e<< "de vida por no estar defendido"<<endl;
                 }
 
                 cout<<""<<endl;
@@ -1352,16 +1429,16 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
                 cout<<"Energia:"<<p2->energia<<endl;
                 cout<<""<<endl;
 
-                if (p1->energia <= 0 && p2->salud<=0){
+                if (p1->energia <= 0 and p2->salud<=0){
                     fin=3;
                 }
-                else if (p1->energia <= 0 && p2->energia<=0){
+                else if (p1->energia <= 0 and p2->energia<=0){
                     fin=3;
                 }
-                else if (p1->salud <= 0 && p2->salud<=0){
+                else if (p1->salud <= 0 and p2->salud<=0){
                     fin=3;
                 }
-                else if (p1->salud <= 0 && p2->energia<=0){
+                else if (p1->salud <= 0 and p2->energia<=0){
                     fin=3;
                 }
                 else if (p1->energia<=0){
@@ -1388,7 +1465,7 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
         else{
             cout<<"TURNO "<<t<<": "<<j2<<endl;
             cout<<p2->nombre<<endl;
-            cout<<"웃"<<endl;
+            cout<<"personaje"<<endl;
             cout<<"Vida:"<<endl;
             cout<<p2->salud<<endl;
             cout<<"Energia:"<<endl;
@@ -1397,7 +1474,7 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
             cout<<""<<endl;
 
             cout<<p1->nombre<<endl;
-            cout<<"웃"<<endl;
+            cout<<"personaje"<<endl;
             cout<<"Vida:"<<endl;
             cout<<p1->salud<<endl;
             cout<<"Energia:"<<endl;
@@ -1405,13 +1482,14 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
 
 
             if (p2->mochila[0]->valor == 0 && p2->mochila[1]->valor == 0 && p2->mochila[2]->valor == 0){
-                cout<<"Parece que "<<p2->nombre<<" no tiene nada que usar para la batalla"<<endl;
-                cout<<"¡ "<<p1->nombre<<" aprovecho la confusion para matarlo por la espalda!"<<endl;
+                cout<<p2->nombre<<" no tiene nada que usar para la batalla"<<endl;
+                cout<<"¡ "<<p1->nombre<<" aprovecho para matarlo por la espalda!"<<endl;
                 p2->salud=0;
             }
             else{
                 cout<<"¿Que vas a usar? "<<j2<<endl;
                 for (int i=0; i<3; i++){
+
                     if (p2->mochila[i]->valor != 0){
                         cout<<i+1<<". "<<p2->mochila[i]->nombre<<endl;
                         cout<<p2->mochila[i]->tipo<<endl;
@@ -1419,7 +1497,7 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
                         cout<<"Su uso resta "<<p2->mochila[i]->energia<<" de energia"<<endl;
 
                         if (p2->mochila[i]->tipo == "Defensa"){
-                            cout<<"Cubre "<<p2->mochila[i]->contenedor<<endl;
+                            cout<<"Protege "<<p2->mochila[i]->contenedor<<endl;
                         }
                         if (p2->mochila[i]->tipo == "Supervivencia"){
                             cout<<"Recupera la "<<p2->mochila[i]->recuperacion<<endl;
@@ -1464,7 +1542,7 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
                     aux_def=opv;
                     def2=p2->mochila[opv]->valor;
                     cout<<"El proximo ataque de tu rival hace "<<p2->mochila[opv]->valor<<" menos de daño"<<endl;
-                    cout<<"Optubiste una covertura de "<<p2->mochila[opv]->contenedor<<" de daños"<<endl;
+                    cout<<"Obtubviste una proteccion "<<p2->mochila[opv]->contenedor<<" de daños"<<endl;
                     cout<<p2->nombre<<" perdio "<<p2->mochila[opv]->energia<<" energia"<<endl;
                     p2->energia = p2->energia - p2->mochila[opv]->energia;
 
@@ -1486,9 +1564,9 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
                 }
                 if (efecto2e!=0){
                     p2->energia=p2->energia-efecto2e;
-                    cout<<p2->nombre<<" perdio"<< efecto2e<< "de energia por no estar  con proteccion"<<endl;
+                    cout<<p2->nombre<<" perdio"<< efecto2e<< "de energia por no estar  defendido"<<endl;
                     p2->salud=p2->salud-efecto2v;
-                    cout<<p2->nombre<<" perdio"<< efecto2e<< "de vida por no estar  con proteccion"<<endl;
+                    cout<<p2->nombre<<" perdio"<< efecto2e<< "de vida por no estar  defendido"<<endl;
                 }
 
                 cout<<""<<endl;
@@ -1502,16 +1580,16 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
                 cout<<"Energia:"<<p2->energia<<endl;
                 cout<<""<<endl;
 
-                if (p1->energia <= 0 && p2->salud<=0){
+                if (p1->energia <= 0 and p2->salud<=0){
                     fin=3;
                 }
-                else if (p1->energia <= 0 && p2->energia<=0){
+                else if (p1->energia <= 0 and p2->energia<=0){
                     fin=3;
                 }
-                else if (p1->salud <= 0 && p2->salud<=0){
+                else if (p1->salud <= 0 and p2->salud<=0){
                     fin=3;
                 }
-                else if (p1->salud <= 0 && p2->energia<=0){
+                else if (p1->salud <= 0 and p2->energia<=0){
                     fin=3;
                 }
                 else if (p1->energia<=0){
@@ -1537,11 +1615,11 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
         }
     }
     if (fin==3){
-        cout<<"¡Vaya! parece que ambos han caido en batalla "<<endl<<"¡Ningun bando gana!"<<endl;
+        cout<<"Ambos han caido en batalla Nooooo :( "<<endl<<"¡Ningun bando gana!"<<endl;
     }
     else if(fin==2){
-        cout<<"El peleador de "<<j2<<" ha caido en batalla, toda su energia ha sido abasorvida por el peleador de "<<j1<<endl;
-        cout<<j1<<" gana el encuentro "<<endl;
+        cout<<"El peleador de "<<j2<<" ha caido en batalla, toda su energia ha sido absorvida por el peleador de "<<j1<<endl;
+        cout<<j1<<" gana la pelea"<<endl;
         if(p2->energia > 0){
             p1->energia+=p2->energia;
         }
@@ -1549,8 +1627,8 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
         RecuperarEnergia(p1, razas);
     }
     else if(fin==1){
-        cout<<"El peleador de "<<j1<<" ha caido en batalla, toda su energia ha sido abasorvida por el peleador de "<<j2<<endl;
-        cout<<j2<<" gana el encuentro "<<endl;
+        cout<<"El peleador de "<<j1<<" ha caido en batalla, toda su energia ha sido absorvida por el peleador de "<<j2<<endl;
+        cout<<j2<<" gana la batalla "<<endl;
         if(p1->energia > 0){
             p2->energia+=p1->energia;
         }
@@ -1560,6 +1638,6 @@ void Batalla(Soldado* p1, string j1, Soldado* &prs1, Soldado* p2, string j2, Sol
     turnoi+=1;
     RecuperarVida(prs1, razas, p1);
     RecuperarVida(prs2, razas, p2);
-    cout<<"¡Aviso, los peleadores que no lucharon se recuperaron!"<<endl;
+    cout<<"El descanso de los jugadores wue no estan peleando los ha curado ;)"<<endl;
 
 }

@@ -9,6 +9,7 @@ Integrantes:
 #include <string>
 #include "libreria (1).h"
 
+
 using namespace std;
 
 Soldado* equipo1[3]; Soldado* equipo2[3];
@@ -168,6 +169,8 @@ void menu() {
                             }
                             crearEquipo(equipo1,equipo2);
                         } else {
+
+                            string opcion;
                             cout<< "Elige el jugador del equipo 1: "<<endl;
                             Soldado* p1 = elegirJugador(equipo1);
                             cout<< "Elige el jugador del equipo 2: "<<endl;
@@ -175,11 +178,11 @@ void menu() {
                             string j1 = p1->nombre;
                             string j2 = p2->nombre;
                             int num = rand() % 6 + 1;
-                            Ambiente* lugar = lugarPelea(primeroAmbiente,num);
+                            Ambiente* ambiente = lugarPelea(primeroAmbiente,num); ;
                             int turnoi = 0;
                             while (equipomuerto(equipo1) == false|| equipomuerto(equipo2) == false){
                                 while (p1->salud > 0 && p2->salud > 0){
-                                    Batalla(p1,j1,p1,p2,j2,p2,turnoi,lugar,primeroRaza,equipo1,equipo2);
+                                    Batalla(p1,j1,p1,p2,j2,p2,turnoi, ambiente,primeroRaza,equipo1,equipo2);
                                 }
                                 turnoi++;
                                 cout << "Elige el nuevo jugador del equipo 1: "<<endl;
@@ -208,7 +211,12 @@ int main() {
     leerArchivoAmbientes(primeroAmbiente, ultimoAmbiente);
     leerArchivoRazas(primeroRaza, ultimoRaza);
     leerArchivoAccesorios(primeroAccesorio, ultimoAccesorio);
-
+    crearso("Juan",devolverrazarandom());
+    crearso("Pedro",devolverrazarandom());
+    crearso("Luis",devolverrazarandom());
+    crearso("Maria",devolverrazarandom());
+    crearso("Ana",devolverrazarandom());
+    crearso("Sofia",devolverrazarandom());
 
     menu();
     return 0;
